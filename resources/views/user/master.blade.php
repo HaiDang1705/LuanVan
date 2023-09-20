@@ -83,9 +83,9 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link navbar-color" href="{{asset('user/cart')}}">
+                    <a class="nav-link navbar-color" href="{{asset('user/cart/show')}}">
                         GIỎ HÀNG
-                        <i class="fa fa-shopping-cart icon-color" aria-hidden="true"> (0)</i>
+                        <i class="fa fa-shopping-cart icon-color" aria-hidden="true"> ({{Cart::count()}})</i>
                     </a>
                 </li>
                 @else

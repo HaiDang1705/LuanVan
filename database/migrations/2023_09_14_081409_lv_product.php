@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('product_price');
             $table->string('product_image');
             $table->text('product_mota');
+            $table->integer('product_status');
             $table->integer('product_cate')->unsigned();
             // Danh muc cate_id la khoa ngoai
             $table->foreign('product_cate')

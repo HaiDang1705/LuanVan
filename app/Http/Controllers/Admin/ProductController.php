@@ -49,6 +49,7 @@ class ProductController extends Controller
         $product->product_image = $filename;
         $product->product_price = $request->price;
         $product->product_mota = $request->description;
+        $product->product_status = $request->status;
         $product->product_type = $request->type;
         $product->product_cate = $request->cate;
         $product->product_color = $request->color;
@@ -80,6 +81,7 @@ class ProductController extends Controller
         $arr['product_slug'] = str::slug($request->name);
         $arr['product_price'] = $request->price;
         $arr['product_mota'] = $request->description;
+        $arr['product_status'] = $request->status;
         $arr['product_type'] = $request->type;
         $arr['product_cate'] = $request->cate;
         $arr['product_color'] = $request->color;

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Models\Product;
 use App\Models\Models\Category;
+use App\Models\Models\Comment;
 use Illuminate\Support\Facades\DB;
 
 
@@ -28,6 +29,7 @@ class HomeController extends Controller
         //     ->orderBy('lv_product.product_id', 'asc')
         //     ->get();
         $data['product'] = Product::find($id);
+        $data['comments'] = Comment::where('bl_product_id', $id)->get(); 
         return view('user.product',$data);
     }
 
@@ -49,16 +51,17 @@ class HomeController extends Controller
         // return view('admin.quanly_binhluan');
     }
 
-    // public function postComment(Request $request, $id)
-    // {
-    //     $comment = new Comment();
-    //     $comment->com_name = $request->name;
-    //     $comment->com_email = $request->email;
-    //     $comment->com_content = $request->content;
-    //     $comment->com_product = $id;
-    //     $comment->save();
-    //     return back();
-    // }
+    public function postComment(Request $request, $id)
+    {
+        $comment = new Comment;
+        $comment->bl_name = $request->name;
+        $comment->bl_email = $request->email;
+        $comment->bl_content = $request->content;
+        $comment->bl_status = $request->status;
+        $comment->bl_product_id = $id;
+        $comment->save();
+        return back();
+    }
 
     // Tìm kiếm sản phẩm theo tên
     public function getSearch(Request $request)

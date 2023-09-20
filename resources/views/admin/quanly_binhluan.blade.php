@@ -68,20 +68,23 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($commentlist as $comment)
                     <tr class="text-white">
-                        <td>1</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{$comment->bl_id}}</td>
+                        <td>{{$comment->bl_name}}</td>
                         <td>
-                            <img height="100px" src="" alt="">
+                            <img height="100px" src="{{asset('storage/storage/avatar/'.$comment->product_image)}}" alt="">
                         </td>
-                        <td></td>
                         <td>
-                            <a href="" class="toggle-action" data-brand="">
-                                <div class="toggle-switch">
-                                    <input type="checkbox" id="status" name="status" value="">
-                                    <label for="status"></label>
+                            {{$comment->product_name}}
+                        </td>
+                        <td>{{$comment->bl_content}}</td>
+                        <td>{{ \Carbon\Carbon::parse($comment->created_at)->format('d/m/Y') }}</td>
+                        <td>
+                            <a href="#" class="toggle-action" data-brand="{{ $comment->bl_id }}">
+                                <div class="toggle-switch {{ $comment->bl_status == 1 ? 'active' : '' }}">
+                                    <input type="checkbox" id="status_{{ $comment->bl_id }}" name="status" value="{{ $comment->bl_status }}" @if($comment->bl_status == 1) checked @endif>
+                                    <label for="status_{{ $comment->bl_id }}"></label>
                                 </div>
                             </a>
                         </td>
@@ -89,6 +92,7 @@
                             <a class="btn btn-sm btn-primary" href="" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                         </td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

@@ -9,6 +9,7 @@
     <div class="col-md-9 slider-padding">
         <!-- Cot 1 dong 1 -->
         @foreach($posts as $post)
+        @if($post->post_status == 1)
         <div class="row">
             <div class="col-md-12">
                 <span class="span-heading dropdown ">TIN TỨC CÔNG NGHỆ</span>
@@ -31,6 +32,7 @@
                 <div class="border-line-introducing"></div>
             </div>
         </div>
+        @endif
         @endforeach
         <!-- Thanh Điều Hướng -->
         <div class="row">

@@ -95,6 +95,19 @@
                         </div>
                         <div class="form-group row" style=" text-align: left !important;">
                             <div class="col-sm-6">
+                                <label for="">Trạng thái:<span style="color: red;">*</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6" style=" text-align: left !important;">
+                                <select required name="status" id="">
+                                    <option value="0" @if($product->product_status == 0) selected @endif>Ẩn</option>
+                                    <option value="1" @if($product->product_status == 1) selected @endif>Hiển thị</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row" style=" text-align: left !important;">
+                            <div class="col-sm-6">
                                 <label for="">Chọn giá sản phẩm<span style="color: red;">*</span></label>
                             </div>
                         </div>
@@ -111,7 +124,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-6">
-                                <input required name="slug" type="slug" class="form-control" placeholder="Số lượng sản phẩm">
+                                <input  name="slug" type="slug" class="form-control" placeholder="Số lượng sản phẩm">
                             </div>
                         </div>
                         <!--  -->

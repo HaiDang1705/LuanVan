@@ -1,7 +1,52 @@
 @extends('admin.master')
 @section('title', 'Sản phẩm')
 @section('main')
+<style>
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
 
+    .toggle-switch input[type="checkbox"] {
+        display: none;
+    }
+
+    .toggle-switch label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50px;
+        height: 24px;
+        background-color: #ccc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked+label {
+        background-color: #4CAF50;
+        /* Màu khi toggle bật (On) */
+    }
+
+    .toggle-switch label::before {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: white;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s ease;
+    }
+
+    .toggle-switch input[type="checkbox"]:checked+label::before {
+        transform: translateX(26px);
+        /* Di chuyển khi toggle bật (On) */
+    }
+</style>
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
@@ -22,6 +67,7 @@
                         <th scope="col">HÌNH ẢNH</th>
                         <th scope="col">GIÁ SẢN PHẨM</th>
                         <th scope="col">SỐ LƯỢNG</th>
+                        <th scope="col">HIỂN THỊ</th>
                         <th scope="col">THAO TÁC</th>
                     </tr>
                 </thead>
@@ -39,6 +85,14 @@
                         </td>
                         <td>{{number_format($product->product_price,0,',','.')}} VND</td>
                         <td></td>
+                        <td>
+                            <a href="#" class="toggle-action" data-brand="{{ $product->product_id }}">
+                                <div class="toggle-switch {{ $product->product_status == 1 ? 'active' : '' }}">
+                                    <input type="checkbox" id="status_{{ $product->product_id }}" name="status" value="{{ $product->product_status }}" @if($product->product_status == 1) checked @endif>
+                                    <label for="status_{{ $product->product_id }}"></label>
+                                </div>
+                            </a>
+                        </td>
                         <td>
                             <a class="btn btn-sm btn-primary" style="margin-bottom: 10px;" href="{{asset('admin/sanpham/edit/'.$product->product_id)}}">Edit</a>
                             <a class="btn btn-sm btn-primary" style="margin-bottom: 10px;" href="{{asset('admin/sanpham/delete/'.$product->product_id)}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>

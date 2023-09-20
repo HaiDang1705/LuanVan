@@ -17,9 +17,4 @@ class HomeController extends Controller
         Auth::logout();
         return redirect()->intended('login');
     }
-
-    public function getComment()
-    {
-        return view('admin.quanly_binhluan');
-    }
 }

@@ -31,7 +31,7 @@
                     <p class="card-text">
                         Bảo hàng 1 năm
                     </p>
-                    <a href="{{asset('user/cart')}}" class="btn-danger w-40 button-css button-left">THÊM VÀO GIỎ HÀNG</a>
+                    <a href="{{asset('user/cart/add/'.$product->product_id)}}" class="btn-danger w-40 button-css button-left">THÊM VÀO GIỎ HÀNG</a>
                     <!-- <a href="#" class="btn-danger w-40 button-css">THANH TOÁN</a> -->
                     <div class="border-line-2 padding-top"></div>
                     <p>Danh mục: <a class="font-a" href="#">{{$product->product_cate}}</a></p>
@@ -100,28 +100,44 @@
                             <label style="font-weight: bold;" for="cm">Bình luận:</label>
                             <textarea required rows="10" id="cm" class="form-control" name="content"></textarea>
                         </div>
+                        <div class="form-group" style="display: none;">
+                            <label for="status" style="font-weight: bold;">Trạng thái:</label>
+                            <select required name="status" id="status">
+                                <option value="0">Ẩn</option>
+                                <!-- <option value="1">Hiển thị</option> -->
+                            </select>
+                        </div>
                         <div class="form-group text-right">
-                            <button style="background: #dc3545; color: white; font-weight: bold;" type="submit" class="btn btn-default">Gửi</button>
+                            <input name="submit" style="background: #dc3545; color: white; font-weight: bold;" type="submit" class="btn btn-default"></input>
                         </div>
                         {{csrf_field()}}
                     </form>
+
+                    <div class="alert alert-info" id="comment-submitted" style="display: none;">
+                        Bạn vui lòng chờ admin duyệt, bình luận này sẽ không hiển thị ngay lập tức.
+                    </div>
                 </div>
             </div>
             <!-- Hiển thị bình luận -->
-            <!-- <div id="comment-list">
-                foreach(comments as comment)
+            <div id="comment-list">
+                @foreach($comments as $comment)
+                @if($comment->bl_status == 1)
                 <ul>
                     <li style="font-weight: bold;" class="com-title">
-                        comment->com_name
+                        {{$comment->bl_name}}
                         <br>
-                        <span style="font-weight: normal;opacity: 0.5;">date('d/m/Y H:i',strtotime(comment->created_at))</span>
+                        <span style="font-weight: normal; opacity: 0.5;">{{date('d/m/Y H:i',strtotime($comment->created_at))}}</span>
                     </li>
-                    <li style="list-style: none;" class="com-details">
-                        comment->com_content
-                    </li>
+                    <li style="list-style: none;" class="com-details">{{$comment->bl_content}}</li>
                 </ul>
-                endforeach
-            </div> -->
+                @else
+                <div class="alert alert-info">
+                    Bạn vui lòng chờ admin duyệt, bình luận này sẽ không hiển thị ngay lập tức.
+                </div>
+                @endif
+                @endforeach
+            </div>
+
         </div>
     </div>
 </div>
@@ -129,6 +145,8 @@
 
 @stop
 @section('script')
+
+
 </body>
 
 </html>

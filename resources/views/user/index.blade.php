@@ -4,7 +4,7 @@
 @section('main')
 <!--------------------------------------------------------- Bắt đầu Thay ĐỔi ------------------------------------------------------------>
 <style>
-    .list-group li:hover a{
+    .list-group li:hover a {
         color: white;
         font-weight: bold;
         text-decoration: none;
@@ -73,6 +73,7 @@
 <div class="row slider-margin">
     <!-- Dòng 4 cột 1 -->
     @foreach($listproducts as $product)
+    @if($product->product_status == 1)
     <div class="col-md-3 product-bottom">
         <div class="card">
             <img style="height: 150px;" src="{{asset('storage/storage/avatar/'.$product->product_image)}}" class="card-img-top image" alt="...">
@@ -86,6 +87,7 @@
             </div>
         </div>
     </div>
+    @endif
     @endforeach
 </div>
 </div>

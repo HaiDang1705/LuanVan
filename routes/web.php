@@ -70,8 +70,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
         // });
 
         // quản lý bình luận sản phẩm - http://127.0.0.1:8000/admin/binhluan
-        Route::group(['prefix'=>'binhluan'], function(){
-            Route::get('/', 'HomeController@getComment');
+        Route::group(['prefix' => 'binhluan'], function () {
+            Route::get('/', 'CommentController@getComment');
         });
 
         // 8. quanly_baidang ( baidang) - http://127.0.0.1:8000/admin/baidang - Hiển thị/Thêm/Sửa/Xóa bài đăng
@@ -251,8 +251,13 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
 
 
         // 3. Giỏ hàng - http://127.0.0.1:8000/user/cart
-        Route::get('cart', 'CartController@getCart');
-
+        Route::group(['prefix' => 'cart'], function () {
+            Route::get('add/{id}', 'CartController@getAddCart');
+            Route::get('show', 'CartController@getShowCart');
+            Route::get('delete/{id}', 'CartController@getDeleteCart');
+            Route::get('update', 'CartController@getUpdateCart');
+            Route::post('show', 'CartController@postComplete');
+        });
         // Route::group(['prefix' => 'cart', 'middleware' => 'CheckUserLogedOut'], function () {
         //     Route::get('/', 'LoginController@getLoginUser');
         //     Route::post('/', 'LoginController@postLoginUser');
@@ -280,6 +285,7 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
 
         // 8. Xem chi tiết sản phẩm - http://127.0.0.1:8000/user/detail/6/son-chong-tham-toa
         Route::get('detail/{id}/{slug}', 'HomeController@getDetail');
+        Route::post('detail/{id}/{slug}', 'HomeController@postComment');
 
         // 9. Hiển thị sản phẩm cùng danh mục - http://127.0.0.1:8000/user/category/{id}/son-chong-tham-toa
         Route::get('category/{id}/{slug}.html', 'HomeController@getCategory');

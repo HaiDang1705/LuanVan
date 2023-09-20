@@ -81,6 +81,15 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row" style=" text-align: left !important;display: none;">
+                            <div class="col-sm-6">
+                                <label for="">Trạng thái:<span style="color: red;">*</span></label>
+                                <select required name="status" id="status">
+                                    <option value="1">Hiển thị</option>
+                                    <!-- <option value="1">Hiển thị</option> -->
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row" style=" text-align: left !important;">
                             <div class="col-sm-6">
                                 <label for="">Nhập giá sản phẩm<span style="color: red;">*</span></label>

@@ -11,11 +11,11 @@
                 <span aria-hidden="true">×</span>
             </button>
         </div>
-
+        @if(Cart::count() >= 1)
         <h1 class="text-center">Giỏ hàng</h1>
         <div class="row" style="text-align: center;">
             <div class="col col-md-12">
-                <form action="">
+                <form action="" method="post">
                     <div class="row" style="text-align: center;">
                         <div class="col col-md-8">
                             <table class="table table-bordered">
@@ -31,27 +31,28 @@
                                     </tr>
                                 </thead>
                                 <tbody id="datarow">
+                                    @foreach($products as $product)
                                     <tr>
-                                        <td>1</td>
+                                        <td>{{$product->id}}</td>
                                         <td>
-                                            <img style="width: 60px; object-fit:contain" src="image/bot_tret_tuong_caocap.jpg" class="hinhdaidien">
+                                            <img style="width: 60px; object-fit:contain" src="{{asset('storage/storage/avatar/'.$product->options->img)}}" class="hinhdaidien">
                                         </td>
-                                        <td>Bột trét tường cao cấp</td>
+                                        <td>{{$product->name}}</td>
                                         <td class="text-right">
                                             <div class="form-group">
-                                                <input class="form-control" type="number" value="1" onchange="">
+                                                <input class="form-control" type="number" value="{{$product->qty}}" onchange="updateCart(this.value, '{{$product->rowId}}')">
                                             </div>
                                         </td>
-                                        <td class="text-right">10.000.000đ</td>
-                                        <td class="text-right">
-                                            10.000.000đ</td>
+                                        <td class="text-right">{{number_format($product->price,0,',','.')}}đ</td>
+                                        <td class="text-right">{{number_format($product->price * $product->qty,0,',','.')}}đ</td>
                                         <td>
                                             <!-- Nút xóa, bấm vào sẽ xóa thông tin dựa vào khóa chính `sp_ma` -->
-                                            <a href="" id="delete_1" data-sp-ma="2" class="btn btn-danger btn-delete-sanpham">
+                                            <a href="{{asset('user/cart/delete/'.$product->rowId)}}" id="delete_1" data-sp-ma="2" class="btn btn-danger btn-delete-sanpham">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                             </a>
                                         </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -68,7 +69,7 @@
                                         <h5 style="text-align: left;">Tổng số lượng:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <p style="font-weight: bold;">1 sản phẩm</p>
+                                        <p style="font-weight: bold;">{{Cart::count()}} sản phẩm</p>
 
                                     </div>
                                 </div>
@@ -77,20 +78,48 @@
                                         <h5 style="text-align: left;">Tổng tiền:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <p style="font-weight: bold;">10.000.000đ</p>
+                                        <p style="font-weight: bold;">{{$total}}</p>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
-                                        <a href="" class="btn btn-danger w-100">Đặt hàng</a>
+                                        <h3>Xác nhận mua hàng</h3>
+                                        <form method="post">
+                                            <div class="form-group" style="text-align: left;">
+                                                <label style="font-weight: 700;" for="email">Email:</label>
+                                                <input required type="email" class="form-control" id="email" name="email">
+                                            </div>
+                                            <div class="form-group" style="text-align: left;">
+                                                <label style="font-weight: 700;" for="name">Họ và tên:</label>
+                                                <input required type="text" class="form-control" id="name" name="name">
+                                            </div>
+                                            <div class="form-group" style="text-align: left;">
+                                                <label style="font-weight: 700;" for="phone">Số điện thoại:</label>
+                                                <input required type="number" class="form-control" id="phone" name="phone">
+                                            </div>
+                                            <div class="form-group" style="text-align: left;">
+                                                <label style="font-weight: 700;" for="add">Địa chỉ:</label>
+                                                <input required type="text" class="form-control" id="add" name="add">
+                                            </div>
+                                            <div class="form-group text-right" style="text-align: left;">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <button type="submit" class="btn btn-danger w-20">Thanh toán khi nhận hàng</button>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <button type="submit" class="btn btn-danger w-20">Thanh toán online</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{csrf_field()}}
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </form>
 
-                <div class="col-md-8">
+                <!-- <div class="col-md-8">
                     <h3>Xác nhận mua hàng</h3>
                     <form method="post">
                         <div class="form-group">
@@ -112,15 +141,17 @@
                         <div class="form-group text-right">
                             <button type="submit" class="btn btn-danger w-20">Thực hiện đơn hàng</button>
                         </div>
-                        <!-- {{csrf_field()}} -->
+                        {{csrf_field()}}
                     </form>
-                </div>
-                <!-- <h1>Giỏ hàng rỗng</h1> -->
-                <div style="text-align: center;" class="row-md-8">
-                    <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Quay
-                        về trang chủ</a>
-                    <a href="checkout.html" class="btn btn-primary btn-md"><i class="fa fa-shopping-cart" aria-hidden="true"></i>&nbsp;Thanh toán</a>
-                </div>
+                </div> -->
+                @else
+                <h1>Giỏ hàng rỗng</h1>
+                @endif
+            </div>
+            <div style="text-align: center;" class="row-md-8">
+                <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Quay
+                    về trang chủ</a>
+                <a href="checkout.html" class="btn btn-primary btn-md"><i class="fa fa-shopping-cart" aria-hidden="true"></i>&nbsp;Thanh toán</a>
             </div>
         </div>
     </div>
@@ -130,5 +161,20 @@
 @stop
 @section('script')
 </body>
+<script type="text/javascript">
+    function updateCart(qty, rowId) {
+        $.get(
+            '{{asset('
+            user / cart / update ')}}', {
+                qty: qty,
+                rowId: rowId
+            },
+            function() {
+                location.reload();
+            }
+        );
+    }
+</script>
+
 </html>
 @stop
