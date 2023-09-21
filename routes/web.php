@@ -204,7 +204,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
         Route::group(['prefix' => 'donhang'], function () {
             Route::get('/', 'OrderController@getOrder');
 
-            Route::get('chitiet', 'OrderController@getChiTietOrder');
+            Route::get('chitiet/{id}', 'OrderController@getChiTietOrder');
             // Chi tiết đơn theo id
             // Route::get('{id}', 'OrderController@getChiTietOrder');
 
@@ -256,7 +256,9 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
             Route::get('show', 'CartController@getShowCart');
             Route::get('delete/{id}', 'CartController@getDeleteCart');
             Route::get('update', 'CartController@getUpdateCart');
-            Route::post('show', 'CartController@postComplete');
+            // Route::post('show', 'CartController@postComplete');
+            Route::post('show', 'CartController@postShipping');
+            Route::post('checkout', 'CartController@postShipping')->name('user.cart.checkout');
         });
         // Route::group(['prefix' => 'cart', 'middleware' => 'CheckUserLogedOut'], function () {
         //     Route::get('/', 'LoginController@getLoginUser');

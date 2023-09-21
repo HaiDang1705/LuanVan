@@ -20,8 +20,11 @@ class CheckLogedIn
         // Kiem tra neu dang nhap roi thi vao trong home index QTV
         if(Auth::check())
         {
-            return redirect()->intended('admin/home');
+            // Người dùng đã đăng nhập, chuyển hướng đến trang admin/index hoặc user/index
+            return Auth::user()->role === 2 ? redirect()->intended('admin/index') : redirect()->intended('user/index');
         }
+
+        // Nếu chưa đăng nhập, cho phép truy cập tiếp theo
         return $next($request);
     }
 }

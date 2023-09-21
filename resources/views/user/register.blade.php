@@ -19,7 +19,7 @@
                             <input required type="text" name="email" class="form-control" id="email" placeholder="Email của bạn">
                         </div>
                     </div>
-                    
+
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label" for="name">Họ và tên</label>
                         <div class="col-sm-5">
@@ -27,7 +27,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label class="col-sm-4 col-form-label" for="address">Địa chỉ</label>
                         <div class="col-sm-5">
                             <input required type="text" name="address" class="form-control" id="address" placeholder="Địa chỉ">
@@ -38,6 +38,14 @@
                         <label class="col-sm-4 col-form-label" for="phone">Số điện thoại</label>
                         <div class="col-sm-5">
                             <input required type="text" name="phone" class="form-control" id="phone" placeholder="Số điện thoại">
+                        </div>
+                    </div> -->
+                    <div class="form-group row" style="display: none;">
+                        <label class="col-sm-4 col-form-label" for="phone">Role</label>
+                        <div class="col-sm-5">
+                            <select required name="role" id="status">
+                                <option value="1">user</option>
+                            </select>
                         </div>
                     </div>
 

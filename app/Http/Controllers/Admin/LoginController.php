@@ -20,7 +20,15 @@ class LoginController extends Controller
     {
         $arr = ['email' => $request->email, 'password' => $request->password];
         if(Auth::attempt($arr)){
-            return redirect()->intended('admin/index');
+            $user = Auth::user();
+            session(['user_role' => $user->role]);
+            if($user->role === 2) {
+                return redirect()->intended('admin/index');
+            } else{
+                Auth::logout();
+                return back()->withInput()->with('error','Tài khoản không có quyền truy cập.');
+                // return redirect()->intended('user/index');
+            }
         } else{
             return back()->withInput()->with('error', 'Tài khoản hoặc mật khẩu chưa đúng');
         }

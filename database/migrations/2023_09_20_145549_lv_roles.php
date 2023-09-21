@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lv_users', function (Blueprint $table) {
-            $table->increments('user_id');
-            $table->string('user_name');
-            $table->string('user_address');
-            $table->string('user_phone');
-            $table->string('user_email');
-            $table->string('user_password');
-            $table->timestamps();
+        Schema::create('lv_roles', function (Blueprint $table) {
+            $table->increments('role_id');
+            $table->string('role_name');
+            // $table->timestamps();
         });
     }
 
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lv_users');
+        Schema::dropIfExists('lv_roles');
     }
 };

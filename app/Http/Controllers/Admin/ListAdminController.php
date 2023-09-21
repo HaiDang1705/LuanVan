@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ListAdminController extends Controller
 {
     public function getListAdmin()
     {
-        $data["adminlist"] = Admin::all();
+        $data["userlist"] = User::all();
         return view('admin.danhsach_nhaquantri', $data);
     }
     

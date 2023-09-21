@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('db_qtvs', function (Blueprint $table) {
+        Schema::create('lv_order_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('email');
-            // 
-            $table->string('name');
-            // 
-            $table->string( 'password');
-            // $table->tinyInteger('level');
-            $table->rememberToken();
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('product_id');
+            $table->integer('quantity');
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('db_qtvs');
+        Schema::dropIfExists('lv_order_details');
     }
 };

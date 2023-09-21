@@ -19,19 +19,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($accountlist as $account)
+                    @foreach($userlist as $user)
+                    @if($user->role == 1)
                     <tr class="text-white">
-                        <td>{{$account->user_id}}</td>
-                        <td>{{$account->user_name}}</td>
-                        <td>{{$account->user_email}}</td>
+                        <td>{{$user->id}}</td>
+                        <td>{{$user->name}}</td>
+                        <td>{{$user->email}}</td>
                         <td>
                             Hiển thị / Ẩn
                         </td>
                         <td>
-                            <a class="btn btn-sm btn-primary" onclick="return confirm('Bạn có chắc chắn muốn xóa?')" href="{{asset('admin/account_khachhang/delete/'.$account->user_id)}}">Xóa</a>
+                            <a class="btn btn-sm btn-primary" onclick="return confirm('Bạn có chắc chắn muốn xóa?')" href="{{asset('admin/account_khachhang/delete/'.$user->user_id)}}">Xóa</a>
                             <!-- <a class="btn btn-sm btn-primary" href="">Edit</a> -->
                         </td>
                     </tr>
+                    @endif
                     @endforeach
                 </tbody>
             </table>

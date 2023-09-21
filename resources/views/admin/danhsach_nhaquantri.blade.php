@@ -19,16 +19,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($adminlist as $admin)
+                    @foreach($userlist as $user)
+                    @if($user->role == 2)
                     <tr class="text-white">
-                        <td>{{$admin->id}}</td>
-                        <td>{{$admin->name}}</td>
-                        <td>{{$admin->email}}</td>
+                        <td>{{$user->id}}</td>
+                        <td>{{$user->name}}</td>
+                        <td>{{$user->email}}</td>
                         <!-- <td>
                             <a class="btn btn-sm btn-primary" href="">Xóa</a>
                             <a class="btn btn-sm btn-primary" href="{{asset('admin/listadmin/edit')}}">Edit</a>
                         </td> -->
                     </tr>
+                    @endif
                     @endforeach
                 </tbody>
             </table>

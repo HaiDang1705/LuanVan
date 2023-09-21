@@ -193,7 +193,14 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <img class="rounded-circle me-lg-2" src="img/me.jpg" alt="" style="width: 40px; height: 40px;">
-                            <span class="d-none d-lg-inline-flex">{{Auth::user()->name}}</span>
+                            <span class="d-none d-lg-inline-flex">
+                                <!-- {{Auth::user()->name}} -->
+                                @if (session('user_role') === 2)
+                                {{ Auth::user()->name }} (Admin)
+                                @else
+                                {{ Auth::user()->name }} (User)
+                                @endif
+                            </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <a href="#" class="dropdown-item">Thông tin của tôi</a>

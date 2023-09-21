@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AddAccountUserRequest extends FormRequest
 {
@@ -24,10 +25,20 @@ class AddAccountUserRequest extends FormRequest
     public function rules()
     {
         return [
-            //
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:db_qtvs,email',
-            'password' => 'required|string|min:8|confirmed', // Kiểm tra mật khẩu xác nhận
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('lv_users', 'email')->where(function ($query) {
+                    return $query->where('role', 'user'); // Kiểm tra chỉ khi role là 'user'
+                }),
+                Rule::unique('lv_users', 'email')->where(function ($query) {
+                    return $query->where('role', 'admin'); // Kiểm tra chỉ khi role là 'admin'
+                }),
+            ],
+            'password' => 'required|string|min:8|confirmed',
         ];
     }
 

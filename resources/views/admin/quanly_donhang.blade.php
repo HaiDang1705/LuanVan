@@ -24,47 +24,28 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($orderlist as $order)
                     <tr class="text-white">
-                        <td>1</td>
+                        <td>{{$order->shipping_id}}</td>
                         <td>
-                            2023-08-23 16:30:00
+                        {{$order->created_at}}
                         </td>
-                        <td>700.000 vnđ</td>
-                        <td>Nguyễn Văn A</td>
+                        <td>700.000 vnđ - chưa</td>
+                        <td>{{$order->shipping_name}}</td>
                         <!-- <td>0123456789</td>
                                     <td>Cần Thơ</td> -->
-                        <td>Đã xác nhận</td>
+                        <td>Đã xác nhận - chưa</td>
                         <td>
-                            Chưa thanh toán
+                            Chưa thanh toán - chưa
                             <!-- <a class="btn btn-sm btn-primary" href="">Xóa</a>
                                         <a class="btn btn-sm btn-primary" href="">Edit</a> -->
                         </td>
                         <td>
-                            <a href="{{asset('admin/donhang/chitiet')}}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
-                            <a class="btn btn-sm btn-primary" href="{{asset('admin/donhang/delete/')}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                            <a href="{{asset('admin/donhang/chitiet/'.$order->shipping_id)}}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
+                            <a class="btn btn-sm btn-primary" href="{{asset('admin/donhang/delete/'.$order->shipping_id)}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                         </td>
                     </tr>
-                    <tr class="text-white">
-                        <td>2</td>
-                        <td>
-                            <!-- Image -->
-                            2023-08-23 16:30:00
-                        </td>
-                        <td>700.000 vnđ</td>
-                        <td>Nguyễn Văn B</td>
-                        <!-- <td>0123456789</td>
-                                    <td>Cần Thơ</td> -->
-                        <td>Đang xác nhận</td>
-                        <td>
-                            Chưa thanh toán
-                            <!-- <a class="btn btn-sm btn-primary" href="">Xóa</a>
-                                        <a class="btn btn-sm btn-primary" href="">Edit</a> -->
-                        </td>
-                        <td>
-                            <a href="{{asset('admin/donhang/chitiet')}}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
-                            <a class="btn btn-sm btn-primary" href="{{asset('admin/donhang/delete/')}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

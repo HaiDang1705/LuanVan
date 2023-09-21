@@ -13,15 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('db_qtvs', function (Blueprint $table) {
+        Schema::create('lv_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('email');
             // 
             $table->string('name');
             // 
             $table->string( 'password');
-            // $table->tinyInteger('level');
-            $table->rememberToken();
+            $table->integer('role')->unsigned();
+            $table->foreign('role')
+                ->references('role_id')
+                ->on('lv_roles')
+                ->onDelete('cascade');
+
             $table->timestamps();
         });
     }
@@ -33,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('db_qtvs');
+        Schema::dropIfExists('lv_users');
     }
 };

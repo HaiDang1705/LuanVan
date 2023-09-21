@@ -70,10 +70,15 @@
                 <li class="nav-item">
                     <div class="nav-item dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                            {{ Auth::user()->name }}
+                            <!-- {{ Auth::user()->name }} -->
+                            @if (session('user_role') === 2)
+                            {{ Auth::user()->name }} (Admin)
+                            @else
+                            {{ Auth::user()->name }} (User)
+                            @endif
 
-                            @if (Auth::guard('useraccount')->check())
-                            {{ Auth::guard('useraccount')->user()->name }} <!-- Hiển thị tên người dùng đã đăng nhập -->
+                            @if (Auth::guard('user')->check())
+                            {{ Auth::guard('user')->user()->name }} <!-- Hiển thị tên người dùng đã đăng nhập -->
                             @endif
                         </button>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">

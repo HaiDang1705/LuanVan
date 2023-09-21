@@ -24,13 +24,13 @@
                 </thead>
                 <tbody>
                     <tr class="text-white">
-                        <td>1</td>
+                        <td>{{$order->shipping_id}}</td>
                         <td>
-                            2023-08-23 16:30:00
+                        {{$order->created_at}}
                         </td>
-                        <td>Nguyễn Văn A</td>
-                        <td>0123456789</td>
-                        <td>Cần Thơ</td>
+                        <td>{{$order->shipping_name}}</td>
+                        <td>{{$order->shipping_phone}}</td>
+                        <td>{{$order->shipping_address}}</td>
                         <!-- <td>Đã xác nhận</td>
                                     <td>
                                         Chưa thanh toán

@@ -15,7 +15,7 @@
         <h1 class="text-center">Giỏ hàng</h1>
         <div class="row" style="text-align: center;">
             <div class="col col-md-12">
-                <form action="" method="post">
+                <form action="{{ route('user.cart.checkout') }}" method="post">
                     <div class="row" style="text-align: center;">
                         <div class="col col-md-8">
                             <table class="table table-bordered">
@@ -30,10 +30,13 @@
                                         <th>Hành động</th>
                                     </tr>
                                 </thead>
+                                @php
+                                $counter = 1;
+                                @endphp
                                 <tbody id="datarow">
                                     @foreach($products as $product)
                                     <tr>
-                                        <td>{{$product->id}}</td>
+                                        <td>{{$counter}}</td>
                                         <td>
                                             <img style="width: 60px; object-fit:contain" src="{{asset('storage/storage/avatar/'.$product->options->img)}}" class="hinhdaidien">
                                         </td>
@@ -52,6 +55,9 @@
                                             </a>
                                         </td>
                                     </tr>
+                                    @php
+                                    $counter++;
+                                    @endphp
                                     @endforeach
                                 </tbody>
                             </table>
@@ -69,8 +75,8 @@
                                         <h5 style="text-align: left;">Tổng số lượng:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <p style="font-weight: bold;">{{Cart::count()}} sản phẩm</p>
-
+                                        <!-- <p style="font-weight: bold;">{{Cart::count()}} sản phẩm</p> -->
+                                        <input name="product_slug" style="font-weight: bold;" value="{{Cart::count()}} sản phẩm"></input>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -78,45 +84,47 @@
                                         <h5 style="text-align: left;">Tổng tiền:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <p style="font-weight: bold;">{{$total}}</p>
+                                        <!-- <p style="font-weight: bold;">{{$total}}</p> -->
+                                        <input name="product_total" style="font-weight: bold;" value="{{$total}}"></input>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
                                         <h3>Xác nhận mua hàng</h3>
-                                        <form method="post">
-                                            <div class="form-group" style="text-align: left;">
-                                                <label style="font-weight: 700;" for="email">Email:</label>
-                                                <input required type="email" class="form-control" id="email" name="email">
-                                            </div>
-                                            <div class="form-group" style="text-align: left;">
-                                                <label style="font-weight: 700;" for="name">Họ và tên:</label>
-                                                <input required type="text" class="form-control" id="name" name="name">
-                                            </div>
-                                            <div class="form-group" style="text-align: left;">
-                                                <label style="font-weight: 700;" for="phone">Số điện thoại:</label>
-                                                <input required type="number" class="form-control" id="phone" name="phone">
-                                            </div>
-                                            <div class="form-group" style="text-align: left;">
-                                                <label style="font-weight: 700;" for="add">Địa chỉ:</label>
-                                                <input required type="text" class="form-control" id="add" name="add">
-                                            </div>
-                                            <div class="form-group text-right" style="text-align: left;">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <button type="submit" class="btn btn-danger w-20">Thanh toán khi nhận hàng</button>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <button type="submit" class="btn btn-danger w-20">Thanh toán online</button>
-                                                    </div>
+                                        <!-- <form method="post"> -->
+                                        <div class="form-group" style="text-align: left;">
+                                            <label style="font-weight: 700;" for="email">Email:</label>
+                                            <input required type="email" class="form-control" id="email" name="email">
+                                        </div>
+                                        <div class="form-group" style="text-align: left;">
+                                            <label style="font-weight: 700;" for="name">Họ và tên:</label>
+                                            <input required type="text" class="form-control" id="name" name="name">
+                                        </div>
+                                        <div class="form-group" style="text-align: left;">
+                                            <label style="font-weight: 700;" for="phone">Số điện thoại:</label>
+                                            <input required type="number" class="form-control" id="phone" name="phone">
+                                        </div>
+                                        <div class="form-group" style="text-align: left;">
+                                            <label style="font-weight: 700;" for="add">Địa chỉ:</label>
+                                            <input required type="text" class="form-control" id="add" name="address">
+                                        </div>
+                                        <div class="form-group text-right" style="text-align: left;">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <input type="submit" class="btn btn-danger w-20" value="Thanh toán khi nhận hàng"></input>
                                                 </div>
+                                                <!-- <div class="col-6">
+                                                        <input type="submit" class="btn btn-danger w-20" value="Thanh toán online"></input>
+                                                    </div> -->
                                             </div>
-                                            {{csrf_field()}}
-                                        </form>
+                                        </div>
+                                        <!-- {{csrf_field()}} -->
+                                        <!-- </form> -->
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {{csrf_field()}}
                 </form>
 
                 <!-- <div class="col-md-8">
