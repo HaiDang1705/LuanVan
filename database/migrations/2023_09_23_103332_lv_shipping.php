@@ -19,11 +19,14 @@ return new class extends Migration
             $table->string('shipping_name');
             $table->string('shipping_phone');
             $table->string('shipping_address');
-            // $table->integer('shipping_user_id')->unsigned();
-            // $table->foreign('shipping_user_id')
-            //     ->references('id')
-            //     ->on('lv_users')
-            //     ->onDelete('cascade');
+            $table->integer('shipping_slug');
+            $table->string('shipping_total');
+            // $table->integer('shipping_status');
+            $table->integer('shipping_status')->unsigned();
+            $table->foreign('shipping_status')
+                ->references('status_id')
+                ->on('lv_shipping_status')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

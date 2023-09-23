@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Models\Product;
 use App\Models\Models\Order;
+use App\Models\Models\OrderCart;
 use App\Models\Models\OrderDetail;
+use App\Models\Models\Shipping_Status;
 use \Gloudemans\Shoppingcart\Facades\Cart;
 // use \Hardevine\Shoppingcart\Facades\Cart;
 // use Cart;
@@ -27,6 +29,7 @@ class CartController extends Controller
     {
         $data['total'] = Cart::total();
         $data['products'] = Cart::content();
+        $data['liststatus'] = Shipping_Status::all();
         return view('user.cart', $data);
     }
 
@@ -63,28 +66,32 @@ class CartController extends Controller
     // Gửi đơn hàng
     public function postShipping(Request $request)
     {
-        // $data['cart'] = Cart::content();
-        // $data['total'] = Cart::total();
         $order = new Order;
         $order->shipping_name = $request->name;
         $order->shipping_email = $request->email;
         $order->shipping_phone = $request->phone;
         $order->shipping_address = $request->address;
+        $order->shipping_status = $request->status;
+        $order->shipping_slug = $request->product_slug;
+        $order->shipping_total = $request->product_total;
         $order->save();
 
         // Lưu chi tiết đơn hàng (sản phẩm từ giỏ hàng) vào bảng OrderDetail
         $cartItems = Cart::content();
         foreach ($cartItems as $cartItem) {
             $orderDetail = new OrderDetail;
-            $orderDetail->id = $order->shipping_id;
+            $orderDetail->shipping_id = $order->shipping_id;
+            // $orderDetail->shipping_details_shipping_id = $order->shipping_id;
             $orderDetail->shipping_details_product_id = $cartItem->id;
             $orderDetail->quantity = $cartItem->qty;
             $orderDetail->price = $cartItem->price;
+            $orderDetail->image = $cartItem->options;
             $orderDetail->save();
         }
 
+
         // Xóa giỏ hàng sau khi lưu đơn hàng
         Cart::destroy();
-        return back()->with('success', 'Đơn hàng đã được đặt thành công.');
+        return back()->with('success', 'Đơn hàng đã được đặt thành công');
     }
 }

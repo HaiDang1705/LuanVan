@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lv_order_details', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('product_id');
-            $table->integer('quantity');
-            $table->decimal('price', 10, 2);
+        Schema::create('lv_shipping_status', function (Blueprint $table) {
+            $table->increments('status_id'); // Sử dụng id làm trường khoá tự tăng
+            $table->string('status_name');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lv_order_details');
+        Schema::dropIfExists('lv_shipping_status');
     }
 };

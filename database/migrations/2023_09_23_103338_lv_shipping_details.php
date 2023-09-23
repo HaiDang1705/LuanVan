@@ -15,18 +15,19 @@ return new class extends Migration
     {
         Schema::create('lv_shipping_details', function (Blueprint $table) {
             $table->increments('id'); // Sử dụng id làm trường khoá tự tăng
-            // $table->integer('shipping_details_shipping_id')->unsigned();
-            // $table->foreign('shipping_details_shipping_id')
-            //     ->references('shipping_id')
-            //     ->on('lv_shipping')
-            //     ->onDelete('cascade');
-
+            // $table->integer('shipping_id')->unsigned();
+            $table->integer('shipping_id')->unsigned();
+            $table->foreign('shipping_id')
+                ->references('shipping_id')
+                ->on('lv_shipping')
+                ->onDelete('cascade');
             $table->integer('shipping_details_product_id')->unsigned();
             $table->foreign('shipping_details_product_id')
                 ->references('product_id')
                 ->on('lv_product')
                 ->onDelete('cascade');
             $table->integer('quantity');
+            $table->string('image');
             $table->decimal('price', 10, 2);
             $table->timestamps();
         });

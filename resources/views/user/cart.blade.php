@@ -15,6 +15,7 @@
         <h1 class="text-center">Giỏ hàng</h1>
         <div class="row" style="text-align: center;">
             <div class="col col-md-12">
+                @include('errors.note')
                 <form action="{{ route('user.cart.checkout') }}" method="post">
                     <div class="row" style="text-align: center;">
                         <div class="col col-md-8">
@@ -40,14 +41,20 @@
                                         <td>
                                             <img style="width: 60px; object-fit:contain" src="{{asset('storage/storage/avatar/'.$product->options->img)}}" class="hinhdaidien">
                                         </td>
-                                        <td>{{$product->name}}</td>
+                                        <td>
+                                            {{$product->name}}
+                                        </td>
                                         <td class="text-right">
                                             <div class="form-group">
                                                 <input class="form-control" type="number" value="{{$product->qty}}" onchange="updateCart(this.value, '{{$product->rowId}}')">
                                             </div>
                                         </td>
-                                        <td class="text-right">{{number_format($product->price,0,',','.')}}đ</td>
-                                        <td class="text-right">{{number_format($product->price * $product->qty,0,',','.')}}đ</td>
+                                        <td class="text-right">
+                                            {{number_format($product->price,0,',','.')}}đ
+                                        </td>
+                                        <td class="text-right">
+                                            {{number_format($product->price * $product->qty,0,',','.')}}đ
+                                        </td>
                                         <td>
                                             <!-- Nút xóa, bấm vào sẽ xóa thông tin dựa vào khóa chính `sp_ma` -->
                                             <a href="{{asset('user/cart/delete/'.$product->rowId)}}" id="delete_1" data-sp-ma="2" class="btn btn-danger btn-delete-sanpham">
@@ -75,8 +82,7 @@
                                         <h5 style="text-align: left;">Tổng số lượng:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <!-- <p style="font-weight: bold;">{{Cart::count()}} sản phẩm</p> -->
-                                        <input name="product_slug" style="font-weight: bold;" value="{{Cart::count()}} sản phẩm"></input>
+                                        <input name="product_slug" style="font-weight: bold;" value="{{Cart::count()}}"></input>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -84,7 +90,6 @@
                                         <h5 style="text-align: left;">Tổng tiền:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <!-- <p style="font-weight: bold;">{{$total}}</p> -->
                                         <input name="product_total" style="font-weight: bold;" value="{{$total}}"></input>
                                     </div>
                                 </div>
@@ -108,50 +113,33 @@
                                             <label style="font-weight: 700;" for="add">Địa chỉ:</label>
                                             <input required type="text" class="form-control" id="add" name="address">
                                         </div>
-                                        <div class="form-group text-right" style="text-align: left;">
+                                        <div class="form-group" style="text-align: left;">
                                             <div class="row">
-                                                <div class="col-6">
-                                                    <input type="submit" class="btn btn-danger w-20" value="Thanh toán khi nhận hàng"></input>
+                                                <div class="col-12" style="text-align: left;">
+                                                    <label style="font-weight: 700;" for="add">Trạng thái thanh toán</label>
+                                                    <select required name="status" id="">
+                                                        <!--  -->
+                                                        @foreach($liststatus as $status)
+                                                        <option value="{{$status->status_id}}">{{$status->status_name}}</option>
+                                                        @endforeach
+                                                        <!--  -->
+                                                    </select>
                                                 </div>
-                                                <!-- <div class="col-6">
-                                                        <input type="submit" class="btn btn-danger w-20" value="Thanh toán online"></input>
-                                                    </div> -->
                                             </div>
                                         </div>
-                                        <!-- {{csrf_field()}} -->
-                                        <!-- </form> -->
+                                        <div class="form-group text-right" style="text-align: left;">
+                                            <div class="row">
+                                                <div class="col-6" style="text-align: left;">
+                                                    <input type="submit" class="btn btn-danger w-20" value="Đặt hàng"></input>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {{csrf_field()}}
                 </form>
-
-                <!-- <div class="col-md-8">
-                    <h3>Xác nhận mua hàng</h3>
-                    <form method="post">
-                        <div class="form-group">
-                            <label style="font-weight: 700;" for="email">Email address:</label>
-                            <input required type="email" class="form-control" id="email" name="email">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-weight: 700;" for="name">Họ và tên:</label>
-                            <input required type="text" class="form-control" id="name" name="name">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-weight: 700;" for="phone">Số điện thoại:</label>
-                            <input required type="number" class="form-control" id="phone" name="phone">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-weight: 700;" for="add">Địa chỉ:</label>
-                            <input required type="text" class="form-control" id="add" name="add">
-                        </div>
-                        <div class="form-group text-right">
-                            <button type="submit" class="btn btn-danger w-20">Thực hiện đơn hàng</button>
-                        </div>
-                        {{csrf_field()}}
-                    </form>
-                </div> -->
                 @else
                 <h1>Giỏ hàng rỗng</h1>
                 @endif

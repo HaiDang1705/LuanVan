@@ -19,32 +19,36 @@
                         <!-- <th scope="col">SỐ ĐIỆN THOẠI</th>
                                     <th scope="col">ĐỊA CHỈ</th> -->
                         <th scope="col">TRẠNG THÁI ĐƠN HÀNG</th>
-                        <th scope="col">TRẠNG THÁI THANH TOÁN</th>
+                        <th scope="col">THANH TOÁN</th>
                         <th scope="col">TÙY CHỌN</th>
                     </tr>
                 </thead>
+                @php
+                $counter = 1;
+                @endphp
                 <tbody>
                     @foreach($orderlist as $order)
                     <tr class="text-white">
-                        <td>{{$order->shipping_id}}</td>
+                        <td>{{$counter}}</td>
                         <td>
-                        {{$order->created_at}}
+                            {{$order->created_at}}
                         </td>
-                        <td>700.000 vnđ - chưa</td>
+                        <td>{{$order->shipping_total}} VNĐ</td>
                         <td>{{$order->shipping_name}}</td>
                         <!-- <td>0123456789</td>
                                     <td>Cần Thơ</td> -->
                         <td>Đã xác nhận - chưa</td>
                         <td>
-                            Chưa thanh toán - chưa
-                            <!-- <a class="btn btn-sm btn-primary" href="">Xóa</a>
-                                        <a class="btn btn-sm btn-primary" href="">Edit</a> -->
+                            {{$order->status_name}}
                         </td>
                         <td>
                             <a href="{{asset('admin/donhang/chitiet/'.$order->shipping_id)}}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
                             <a class="btn btn-sm btn-primary" href="{{asset('admin/donhang/delete/'.$order->shipping_id)}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                         </td>
                     </tr>
+                    @php
+                    $counter++;
+                    @endphp
                     @endforeach
                 </tbody>
             </table>
