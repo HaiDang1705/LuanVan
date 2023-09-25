@@ -5,17 +5,20 @@
 <!-- Dòng 2 -->
 <div class="container">
     <div class="row">
-        <div class="col-md-12 row-flex">
+        <div class="col-md-10 row-flex">
             <a class="a-hover" href="index.html">
                 <h4 class="row-margin">TRANG CHỦ</h4>
                 <div class="border-line"></div>
             </a>
+            <!-- Danh mục sản phẩm -->
             <a class="a-hover" href="#">
-                <!-- <h4 class="row-margin">{{$product->product_cate}}</h4> -->
-                <h4 class="row-margin">{{$product->product_cate}}</h4>
+                <h4 class="row-margin">{{$product->cate_name}}</h4>
                 <div class="border-line"></div>
             </a>
             <h4 class="row-margin h4-color">{{$product->product_name}}</h4>
+        </div>
+        <div class="col-md-2 row-flex">
+            <h4 class="row-margin h4-color">Lượt xem: {{$product->product_view}}</h4>
         </div>
     </div>
     <div class="row">

@@ -24,12 +24,19 @@ class HomeController extends Controller
 
     public function getDetail($id)
     {
-        // $data['listproduct'] = DB::table('lv_product')
-        //     ->join('lv_category', 'lv_product.product_cate', '=', 'lv_category.cate_id')
-        //     ->orderBy('lv_product.product_id', 'asc')
-        //     ->get();
+        $data['listproduct'] = DB::table('lv_product')
+            ->join('lv_category', 'lv_product.product_cate', '=', 'lv_category.cate_id')
+            ->orderBy('lv_product.product_id', 'asc')
+            ->get();
+            
         $data['product'] = Product::find($id);
-        $data['comments'] = Comment::where('bl_product_id', $id)->get(); 
+        $data['comments'] = Comment::where('bl_product_id', $id)->get();
+
+        // Lượt xem
+        $product = Product::find($id);
+        $product->product_view += 1;
+        $product->save();
+
         return view('user.product',$data);
     }
 

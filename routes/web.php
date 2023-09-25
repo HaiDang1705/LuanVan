@@ -214,6 +214,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
 
             // Xóa đơn hàng
             Route::get('delete/{id}', 'OrderController@getDeleteOrder');
+            // In don hang
+            Route::get('printorder/{checkout_code}', 'OrderController@printOrder');
         });
     });
 });

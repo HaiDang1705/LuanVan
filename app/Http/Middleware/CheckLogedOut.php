@@ -23,5 +23,11 @@ class CheckLogedOut
             return redirect()->intended('login');
         }
         return $next($request);
+
+        // if (!session('user_role')) {
+        //     return redirect()->intended('login');
+        // }
+        
+        // return $next($request);
     }
 }

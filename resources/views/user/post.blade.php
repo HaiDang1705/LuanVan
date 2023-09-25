@@ -27,8 +27,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-10">
                 <h6>{{$post->post_nguoidang}} - {{ \Carbon\Carbon::parse($post->created_at)->format('d/m/Y') }}</h6>
+            </div>
+            <div class="col-2">
+                <h6>Lượt xem: {{$post->post_view}}</h6>
             </div>
         </div>
         <div style="width: 100%;" class="border-line"></div>

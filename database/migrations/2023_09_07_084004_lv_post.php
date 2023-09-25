@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('post_nguoidang');
             $table->text('post_mota');
             $table->string('post_image');
+            $table->integer('post_view');
             $table->timestamps();
         });
     }

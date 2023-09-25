@@ -79,6 +79,42 @@
         </div>
     </div>
 </div>
+<!-- Lượt xem nhiều -->
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="">
+            <div class="row">
+                <div class="col-4">Tổng khách hàng: 10</div>
+                <!-- Thống kê các bài viết nào được xem nhiều -->
+                <div class="col-4">
+                    <div class="align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0" style="color: #EB1616;">BÀI VIẾT XEM NHIỀU</h6>
+                        <ol class="list_views">
+                            @foreach($post_views as $post)
+                            <li style="text-align: left;">
+                                <a style="color: #ccc;margin-left: 10px;" href="{{asset('user/news/baidang/'.$post->post_id)}}">{{$post->post_name}} | <span style="color: yellow;">{{$post->post_view}}</span></a>
+                            </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                </div>
+                <!-- Thống kê các sản phẩm nào được xem nhiều -->
+                <div class="col-4">
+                    <div class="align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0" style="color: #EB1616;">SẢN PHẨM XEM NHIỀU</h6>
+                        <ol class="list_views">
+                            @foreach($product_views as $product)
+                            <li style="text-align: left;">
+                                <a style="color: #ccc;margin-left: 10px;" href="{{asset('user/detail/'.$product->product_id.'/'.$product->product_slug)}}">{{$product->product_name}} | <span style="color: yellow;">{{$product->product_view}}</span></a>
+                            </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Recent Sales End -->
 <!-------------------------------------------- KẾT THÚC THAY ĐỔI NỘI DUNG ---------------------->
 
@@ -106,5 +142,6 @@
     });
 </script> -->
 </body>
+
 </html>
 @stop

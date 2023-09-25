@@ -6,7 +6,7 @@
     <div class="bg-secondary text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;">THÔNG TIN ĐƠN HÀNG</h6>
-            <a href="#" class="mb-0" style="color: #EB1616;">IN HÓA ĐƠN</a>
+            <a href="{{asset('/admin/donhang/printorder/'.$order->shipping_id)}}" class="mb-0" style="color: #EB1616;">IN HÓA ĐƠN</a>
         </div>
         <!-- Thông tin chủ đơn hàng -->
         <div class="table-responsive" style="margin-bottom: 20px;">
@@ -39,6 +39,35 @@
                         <!-- <td>
                                         <a href="chitiet_donhang.html" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
                                     </td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Thông tin vận chuyển -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;">THÔNG TIN VẬN CHUYỂN</h6>
+        </div>
+        <!-- Thông tin vận chuyển -->
+        <div class="table-responsive" style="margin-bottom: 20px;">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                    <tr class="text-white">
+                        <th scope="col">TÊN NGƯỜI VẬN CHUYỂN</th>
+                        <th scope="col">ĐỊA CHỈ</th>
+                        <th scope="col">SỐ ĐIỆN THOẠI</th>
+                        <th scope="col">EMAIL</th>
+                        <th scope="col">GHI CHÚ</th>
+                        <th scope="col">HÌNH THỨC THANH TOÁN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-white">
+                        <td>Nguyễn Hải Đăng - chưa</td>
+                        <td>Cà Mau - chưa</td>
+                        <td>0123456789 - chưa</td>
+                        <td>dang@gmail.com - chưa</td>
+                        <td>aaaaaaaa - chưa</td>
+                        <td>Thanh toán khi nhận hàng - chưa</td>
                     </tr>
                 </tbody>
             </table>
@@ -91,6 +120,13 @@
             </table>
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616; margin-top:20px">TỔNG: {{ number_format(floatval(str_replace(',', '', $order->shipping_total)), 0, ',', '.') }} VNĐ</h6>
+            </div>
+            <div>
+                <select name="" id="">
+                    <option value="">Đã xử lý - Đã giao hàng</option>
+                    <option value="">Đã xử lý - Chưa giao hàng</option>
+                    <option value="">Chưa xử lý - Chưa giao hàng</option>
+                </select>
             </div>
         </div>
     </div>

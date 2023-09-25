@@ -8,6 +8,8 @@ use App\Models\Models\OrderCart;
 use App\Models\Models\OrderDetail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use PDF;
+use Illuminate\Support\Facades\App;
 
 use function Symfony\Component\String\b;
 
@@ -67,5 +69,19 @@ class OrderController extends Controller
     {
         Order::destroy($id);
         return back();
+    }
+
+    // In đơn hàng
+    public function printOrder($checkout_code)
+    {
+        // $pdf = \App::make('dompdf.wrapper');
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadHTML($this->printOrderConvert($checkout_code));
+        return $pdf->stream();
+    }
+
+    public function printOrderConvert($checkout_code)
+    {
+        return $checkout_code;
     }
 }

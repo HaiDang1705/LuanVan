@@ -26,5 +26,13 @@ class CheckLogedIn
 
         // Nếu chưa đăng nhập, cho phép truy cập tiếp theo
         return $next($request);
+
+        // if (session('user_role') === 2) {
+        //     return redirect()->intended('admin/index');
+        // } elseif (session('user_role') === 1) {
+        //     return redirect()->intended('user/index');
+        // }
+        
+        // return $next($request);
     }
 }
