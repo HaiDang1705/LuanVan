@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Models\Order;
 use App\Models\Models\OrderCart;
 use App\Models\Models\OrderDetail;
+use App\Models\Models\Shipping_States;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use PDF;
@@ -28,12 +29,20 @@ class OrderController extends Controller
         return view('admin.quanly_donhang', $data);
     }
 
+    // Đếm số lượng đơn hàng
+    public function countOrder()
+    {
+        $totalOrders = Order::count();
+        return $totalOrders;
+    }
+
     // Chi tiết đơn hàng
     public function getChiTietOrder($id)
     {
         $data['order'] = Order::find($id);
         // Lấy tất cả các sản phẩm trong đơn hàng có shipping_id tương ứng
         $data['orderdetails'] = OrderDetail::where('shipping_id', $id)->get();
+        $data['liststates'] = Shipping_States::all();
 
         // Tạo một mảng để lưu thông tin tên sản phẩm
         $data['product_names'] = [];
@@ -54,6 +63,14 @@ class OrderController extends Controller
 
         // $data['ordercart'] = OrderCart::find($id);
         return view('admin.chitiet_donhang', $data);
+    }
+
+    public function postChiTietOrder(Request $request, $id)
+    {
+        $order = Order::find($id);
+        $order->shipping_states = $request->states;
+        $order->save();
+        return redirect('admin/donhang');
     }
 
     // Sửa đơn hàng

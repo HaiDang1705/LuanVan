@@ -99,4 +99,11 @@ class BaiDangController extends Controller
         Post::destroy($id);
         return back();
     }
+
+    // Đếm số lượng bài đăng
+    public function countPost()
+    {
+        $totalPosts = Post::count();
+        return $totalPosts;
+    }
 }

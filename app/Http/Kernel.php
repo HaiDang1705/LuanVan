@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Fruitcake\Cors\HandleCors::class,
     ];
 
     /**
@@ -36,6 +37,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            
         ],
 
         'api' => [
@@ -55,6 +57,9 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'CheckLogedIn' => \App\Http\Middleware\CheckLogedIn::class,
         'CheckUserLogedIn' => \App\Http\Middleware\CheckUserLogedIn::class,
+        // 
+        'CheckUserIn' => \App\Http\Middleware\CheckUserIn::class,
+        // 
         'CheckLogedOut' => \App\Http\Middleware\CheckLogedOut::class,
         'CheckUserLogedOut' => \App\Http\Middleware\CheckUserLogedOut::class,
         'auth' => \App\Http\Middleware\Authenticate::class,

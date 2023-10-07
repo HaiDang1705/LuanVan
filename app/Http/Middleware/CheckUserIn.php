@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class CheckLogedOut
+class CheckUserIn
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,9 @@ class CheckLogedOut
      */
     public function handle(Request $request, Closure $next)
     {
-        // Kiem tra neu chua dang nhap thi ve trang login
-        if(Auth::guest())
+        if (Auth::guard('customer')->check())
         {
-            return redirect()->intended('login');
+            return redirect()->intended('user/infor');
         }
         return $next($request);
     }

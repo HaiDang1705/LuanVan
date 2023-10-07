@@ -73,13 +73,6 @@
                                     <input required type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com">
                                     <label for="floatingInput">Địa chỉ Email</label>
                                 </div>
-                                <div class="form-floating mb-3" style="display: none;">
-                                    <!-- <input type="number" class="form-control" id="floatingInput" placeholder="phonenumber"> -->
-                                    <select required name="role" id="status">
-                                        <option value="2">admin</option>
-                                    </select>
-                                    <!-- <label for="floatingInput">Admin/User</label> -->
-                                </div>
                                 <div class="form-floating mb-4">
                                     <input required type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
                                     <label for="floatingPassword">Mật khẩu</label>

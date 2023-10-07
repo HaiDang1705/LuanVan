@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('lv_shipping_status', function (Blueprint $table) {
             $table->increments('status_id'); // Sử dụng id làm trường khoá tự tăng
             $table->string('status_name');
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 

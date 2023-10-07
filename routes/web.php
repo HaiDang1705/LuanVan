@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// // Route cho người dùng
+// Route::group(['middleware' => 'checkUserRole:1'], function () {
+//     Route::get('user/index', 'UserController@index')->name('user.index');
+//     // Thêm các route cho người dùng ở đây
+// });
+
+// // Route cho quản trị viên
+// Route::group(['middleware' => 'checkUserRole:2'], function () {
+//     Route::get('admin/index', 'AdminController@index')->name('admin.index');
+//     // Thêm các route cho quản trị viên ở đây
+// });
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -205,6 +218,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::get('/', 'OrderController@getOrder');
 
             Route::get('chitiet/{id}', 'OrderController@getChiTietOrder');
+            Route::post('chitiet/{id}', 'OrderController@postChiTietOrder');
             // Chi tiết đơn theo id
             // Route::get('{id}', 'OrderController@getChiTietOrder');
 
@@ -222,27 +236,24 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
 
 // USER
 Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
-    // Đăng nhập - http://127.0.0.1:8000/user/login
-
-
-
-    // Route sau khi Login dung => vao trang index
-    // Route::group(['prefix' => 'admin', 'middleware' => 'CheckLogedOut'], function () {
-
-    //Route Logout khoi tai khoan user
-    // Route::get('logout', '@getLogout');
-
-    // Route::group(['prefix' => 'user', 'middleware' => 'CheckLogedOut'], function () {
     Route::group(['prefix' => 'user'], function () {
+        //Infor - thông tin của người dùng
+        Route::group(['prefix' => 'infor'], function () {
+            // Route::group(['prefix' => 'infor', 'middleware' => 'CheckUserIn'], function () {
+            Route::get('/{id}', 'HomeController@getInfor');
+            Route::post('/{id}', 'HomeController@postInfor');
+            Route::get('/{id}/huyen', 'HomeController@getHuyen');
+            Route::get('/{id}/xa', 'HomeController@getXa');
+        });
+
         // 1. Index - http://127.0.0.1:8000/user/index
         Route::get('index', 'HomeController@getHome');
 
         // 2. Đăng nhập - http://127.0.0.1:8000/user/login
-        // Route::get('login', 'LoginController@getLogin');
         // -------------------------------------------------------------------------------------------------------
-        Route::group(['prefix' => 'login', 'middleware' => 'CheckUserLogedIn'], function () {
-            Route::get('/', 'LoginController@getLoginUser');
-            Route::post('/', 'LoginController@postLoginUser');
+        Route::group(['prefix' => 'login', 'middleware' => 'CheckUserLogedOut'], function () {
+            Route::get('/', 'LoginController@getLogin');
+            Route::post('/', 'LoginController@postLogin');
         });
         //Logout
         Route::get('logout', 'HomeController@getLogout');
@@ -253,8 +264,11 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
 
 
         // 3. Giỏ hàng - http://127.0.0.1:8000/user/cart
+        // Route::group(['prefix' => 'cart', 'middleware' => 'CheckUserLogedIn'], function () {
         Route::group(['prefix' => 'cart'], function () {
-            Route::get('add/{id}', 'CartController@getAddCart');
+            // Route::get('add/{id}', 'CartController@getAddCart');
+            Route::get('add/{id}', 'CartController@getAddCart'); // Thêm middleware ở đây
+
             Route::get('show', 'CartController@getShowCart');
             Route::get('delete/{id}', 'CartController@getDeleteCart');
             Route::get('update', 'CartController@getUpdateCart');
@@ -262,10 +276,6 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
             Route::post('show', 'CartController@postShipping');
             Route::post('checkout', 'CartController@postShipping')->name('user.cart.checkout');
         });
-        // Route::group(['prefix' => 'cart', 'middleware' => 'CheckUserLogedOut'], function () {
-        //     Route::get('/', 'LoginController@getLoginUser');
-        //     Route::post('/', 'LoginController@postLoginUser');
-        // });
 
         // 4. Đăng ký - http://127.0.0.1:8000/user/register
         Route::get('register', 'RegisterController@getRegister');

@@ -20,11 +20,6 @@ return new class extends Migration
             $table->string('name');
             // 
             $table->string( 'password');
-            $table->integer('role')->unsigned();
-            $table->foreign('role')
-                ->references('role_id')
-                ->on('lv_roles')
-                ->onDelete('cascade');
 
             $table->timestamps();
         });

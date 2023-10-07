@@ -17,9 +17,11 @@ class CheckUserLogedOut
      */
     public function handle(Request $request, Closure $next)
     {
+        // Kiem tra neu chua dang nhap thi ve trang login
         if(Auth::guest())
+        // if(Auth::guard('customer')->guest())
         {
-            return redirect()->intended('login');
+            return redirect()->intended('user/login');
         }
         return $next($request);
     }

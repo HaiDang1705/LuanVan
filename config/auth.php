@@ -41,20 +41,11 @@ return [
             'provider' => 'users',
         ],
 
-        // 'useraccount' => [ // Thêm guard cho UserAccount
-        //     'driver' => 'session',
-        //     'provider' => 'useraccounts', // Tên provider tương ứng với model UserAccount
-        // ],
-
-        'admin' => [
+        'customer' => [
             'driver' => 'session',
-            'provider' => 'admins',
+            'provider' => 'customers',
         ],
 
-        'user' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
     ],
 
     /*
@@ -75,24 +66,14 @@ return [
     */
 
     'providers' => [
-        // 'users' => [
-        //     'driver' => 'eloquent',
-        //     'model' => App\Models\User::class,
-        // ],
-
-        // 'useraccounts' => [ // Thêm provider cho UserAccount
-        //     'driver' => 'eloquent',
-        //     'model' => App\Models\UserAccount::class, // Thay đổi tên model tương ứng
-        // ],
-
-        'admins' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Admin::class, // Replace with your admin model
-        ],
-
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class, // Replace with your user model
+        ],
+
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Customer::class,
         ],
     ],
 

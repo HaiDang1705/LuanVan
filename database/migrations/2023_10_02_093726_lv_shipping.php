@@ -27,6 +27,11 @@ return new class extends Migration
                 ->references('status_id')
                 ->on('lv_shipping_status')
                 ->onDelete('cascade');
+            $table->integer('shipping_states')->unsigned();
+            $table->foreign('shipping_states')
+                ->references('states_id')
+                ->on('lv_shipping_states')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

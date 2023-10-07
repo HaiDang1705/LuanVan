@@ -195,11 +195,7 @@
                             <img class="rounded-circle me-lg-2" src="img/me.jpg" alt="" style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex">
                                 <!-- {{Auth::user()->name}} -->
-                                @if (session('user_role') === 2)
-                                {{ Auth::user()->name }} (Admin)
-                                @else
-                                {{ Auth::user()->name }} (User)
-                                @endif
+                                {{ Auth::user()->name }}
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">

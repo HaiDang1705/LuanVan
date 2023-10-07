@@ -13,16 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('db_qtvs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('email');
-            // 
-            $table->string('name');
-            // 
-            $table->string( 'password');
-            // $table->tinyInteger('level');
-            $table->rememberToken();
-            $table->timestamps();
+        Schema::create('lv_shipping_states', function (Blueprint $table) {
+            $table->increments('states_id'); // Sử dụng id làm trường khoá tự tăng
+            $table->string('states_name');
+            // $table->timestamps();
         });
     }
 
@@ -33,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('db_qtvs');
+        Schema::dropIfExists('lv_shipping_states');
     }
 };

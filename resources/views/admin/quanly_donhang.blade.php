@@ -37,7 +37,13 @@
                         <td>{{$order->shipping_name}}</td>
                         <!-- <td>0123456789</td>
                                     <td>Cần Thơ</td> -->
-                        <td>Đã xác nhận - chưa</td>
+                        <td>
+                            @if($order->shipping_states == 1)
+                            <span style="padding: 10px 28px;background: red;border-radius: 12px;">Chưa xử lý</span>
+                            @else
+                            <span style="padding: 10px 28px;background: forestgreen;border-radius: 12px;">Đã xử lý</span>
+                            @endif
+                        </td>
                         <td>
                             {{$order->status_name}}
                         </td>

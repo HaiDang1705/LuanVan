@@ -42,11 +42,11 @@
                     </div> -->
                     <div class="form-group row" style="display: none;">
                         <label class="col-sm-4 col-form-label" for="phone">Role</label>
-                        <div class="col-sm-5">
+                        <!-- <div class="col-sm-5">
                             <select required name="role" id="status">
                                 <option value="1">user</option>
                             </select>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="form-group row">

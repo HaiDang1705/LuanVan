@@ -8,8 +8,8 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-line fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng ứng viên</p>
-                    <h6 class="mb-0">10</h6>
+                    <p class="mb-2">Tổng sản phẩm</p>
+                    <h6 class="mb-0">{{ $totalProducts }}</h6>
                 </div>
             </div>
         </div>
@@ -17,8 +17,8 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-bar fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng nhà tuyển dụng</p>
-                    <h6 class="mb-0">30</h6>
+                    <p class="mb-2">Tổng bài đăng</p>
+                    <h6 class="mb-0">{{ $totalPosts }}</h6>
                 </div>
             </div>
         </div>
@@ -26,8 +26,8 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-area fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Công việc đã đăng</p>
-                    <h6 class="mb-0">100</h6>
+                    <p class="mb-2">Tổng doanh thu</p>
+                    <h6 class="mb-0">{{$totalDoanhThu}}.000 VNĐ</h6>
                 </div>
             </div>
         </div>
@@ -35,8 +35,8 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-pie fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Lượt ứng tuyển</p>
-                    <h6 class="mb-0">200</h6>
+                    <p class="mb-2">Tổng đơn hàng</p>
+                    <h6 class="mb-0">{{$totalOrders}}</h6>
                 </div>
             </div>
         </div>

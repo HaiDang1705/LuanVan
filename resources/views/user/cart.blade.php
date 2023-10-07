@@ -113,6 +113,16 @@
                                             <label style="font-weight: 700;" for="add">Địa chỉ:</label>
                                             <input required type="text" class="form-control" id="add" name="address">
                                         </div>
+                                        <div class="form-group" style="text-align: left; display:none">
+                                            <div class="row">
+                                                <div class="col-12" style="text-align: left;">
+                                                    <label style="font-weight: 700;" for="add">Trạng thái đơn hàng</label>
+                                                    <select required name="states" id="">
+                                                        <option value="1">Chưa xử lý - Chưa giao hàng</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="form-group" style="text-align: left;">
                                             <div class="row">
                                                 <div class="col-12" style="text-align: left;">
@@ -160,8 +170,7 @@
 <script type="text/javascript">
     function updateCart(qty, rowId) {
         $.get(
-            '{{asset('
-            user / cart / update ')}}', {
+            "{{asset('user/cart/update') }}",{
                 qty: qty,
                 rowId: rowId
             },

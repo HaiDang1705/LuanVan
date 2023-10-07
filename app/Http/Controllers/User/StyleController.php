@@ -10,6 +10,8 @@ class StyleController extends Controller
 {
     public function getStyleHome()
     {
-        return view('user.stylehome');
+        $customer = Auth::guard('customer')->user();
+        $data['customer'] = $customer;
+        return view('user.stylehome', $data);
     }
 }

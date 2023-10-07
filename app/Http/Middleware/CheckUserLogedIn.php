@@ -17,9 +17,12 @@ class CheckUserLogedIn
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::check())
+        if (Auth::guard('customer')->check())
         {
-            return redirect()->intended('user/index');
+            return redirect()->intended('user/cart/show');
+        }
+        else {
+            return redirect()->intended('user/login');
         }
         return $next($request);
     }

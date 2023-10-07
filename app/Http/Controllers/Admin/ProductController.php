@@ -28,7 +28,10 @@ class ProductController extends Controller
             ->join('lv_colorproduct', 'lv_product.product_color', '=', 'lv_colorproduct.color_id')
             ->orderBy('lv_product.product_id', 'asc')
             ->get();
+        // Lấy tổng số sản phẩm
+        // $totalProducts = $this->countProduct();
         return view('admin.quanly_sanpham', $product);
+        // return view('admin.quanly_sanpham', compact('product', 'totalProducts'));
     }
 
     // Thêm sản phẩm
@@ -54,10 +57,10 @@ class ProductController extends Controller
         $product->product_cate = $request->cate;
         $product->product_color = $request->color;
         $product->product_brand = $request->brand;
-        
+
         $product->save();
         $request->image->storeAs('public/storage/avatar', $filename);
-        
+
         // Lưu thông báo thành công vào Session
         Session::flash('success', 'Thêm sản phẩm thành công');
         return back();
@@ -87,11 +90,10 @@ class ProductController extends Controller
         $arr['product_color'] = $request->color;
         $arr['product_brand'] = $request->brand;
 
-        if($request->hasFile('image'))
-        {
+        if ($request->hasFile('image')) {
             $img = $request->image->getClientOriginalName();
             $arr['product_image'] = $img;
-            $request->image->storeAs('public/storage/avatar',$img);
+            $request->image->storeAs('public/storage/avatar', $img);
         }
         $product::where('product_id', $id)->update($arr);
         // Lưu thông báo thành công vào Session
@@ -104,5 +106,12 @@ class ProductController extends Controller
     {
         Product::destroy($id);
         return back();
+    }
+
+    // Đếm số lượng sản phẩm
+    public function countProduct()
+    {
+        $totalProducts = Product::count();
+        return $totalProducts;
     }
 }

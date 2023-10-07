@@ -65,34 +65,27 @@
                 <!-- -------------------------------------------------------- -->
 
                 <!-- Thay thế đoạn code đăng nhập và đăng ký -->
-                @if (Auth::check())
 
-                <li class="nav-item">
-                    <div class="nav-item dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                            <!-- {{ Auth::user()->name }} -->
-                            @if (session('user_role') === 2)
-                            {{ Auth::user()->name }} (Admin)
-                            @else
-                            {{ Auth::user()->name }} (User)
-                            @endif
-
-                            @if (Auth::guard('user')->check())
-                            {{ Auth::guard('user')->user()->name }} <!-- Hiển thị tên người dùng đã đăng nhập -->
-                            @endif
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">Thông tin của tôi</a>
-                            <a href="{{asset('logout')}}" class="dropdown-item">Đăng xuất</a>
-                        </div>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link navbar-color" href="{{asset('user/cart/show')}}">
                         GIỎ HÀNG
                         <i class="fa fa-shopping-cart icon-color" aria-hidden="true"> ({{Cart::count()}})</i>
                     </a>
                 </li>
+                @if (Auth::guard('customer')->check())
+                <li class="nav-item">
+                    <div class="nav-item dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                            {{ Auth::guard('customer')->user()->name }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            <a href="{{asset('user/infor/'.$customer->id)}}" class="dropdown-item">Thông tin của tôi</a>
+                            <a href="{{asset('user/.$customer->id./cart-history')}}" class="dropdown-item">Lịch sử mua hàng</a>
+                            <a href="{{asset('user/logout')}}" class="dropdown-item">Đăng xuất</a>
+                        </div>
+                    </div>
+                </li>
+                
                 @else
                 <li class="nav-item">
                     <a class="nav-link" href="{{asset('user/login')}}">ĐĂNG NHẬP</a>

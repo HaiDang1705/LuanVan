@@ -121,13 +121,22 @@
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616; margin-top:20px">TỔNG: {{ number_format(floatval(str_replace(',', '', $order->shipping_total)), 0, ',', '.') }} VNĐ</h6>
             </div>
-            <div>
-                <select name="" id="">
-                    <option value="">Đã xử lý - Đã giao hàng</option>
-                    <option value="">Đã xử lý - Chưa giao hàng</option>
-                    <option value="">Chưa xử lý - Chưa giao hàng</option>
-                </select>
-            </div>
+            <form action="" method="post">
+                <div>
+                    <select required name="states" id="">
+                        <!--  -->
+                        <!--  -->
+                        @foreach($liststates as $states)
+                        <option value="{{$states->states_id}}" @if($order->
+                            shipping_states == $states->states_id) selected @endif>
+                            {{$states->states_name}}
+                        </option>
+                        @endforeach
+                    </select>
+                    <input name="submit" type="submit" class="btn btn-primary" style="margin-left:20px;" value="Duyệt"></input>
+                </div>
+                {{csrf_field()}}
+            </form>
         </div>
     </div>
 </div>

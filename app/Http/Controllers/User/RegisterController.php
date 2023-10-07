@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-// use App\Models\Models\Users;
-use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Session;
 use App\Http\Requests\AddAccountUserRequest;
 
@@ -19,14 +16,14 @@ class RegisterController extends Controller
 
     public function postRegister(AddAccountUserRequest $request)
     {
-        $user = new User;
-        $user->name = $request->name;
+        $accountCustomer = new Customer();
+        $accountCustomer->name = $request->name;
         // $user->address = $request->address;
         // $user->phone = $request->phone;
-        $user->email = $request->email;
-        $user->role = $request->role;
-        $user->password = bcrypt($request->password);
-        $user->save();
+        $accountCustomer->email = $request->email;
+        // $user->role = $request->role;
+        $accountCustomer->password = bcrypt($request->password);
+        $accountCustomer->save();
 
         // Lưu thông báo thành công vào Session
         Session::flash('success', 'Bạn đã đăng ký thành công');

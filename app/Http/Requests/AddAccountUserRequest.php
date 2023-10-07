@@ -31,12 +31,6 @@ class AddAccountUserRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('lv_users', 'email')->where(function ($query) {
-                    return $query->where('role', 'user'); // Kiểm tra chỉ khi role là 'user'
-                }),
-                Rule::unique('lv_users', 'email')->where(function ($query) {
-                    return $query->where('role', 'admin'); // Kiểm tra chỉ khi role là 'admin'
-                }),
             ],
             'password' => 'required|string|min:8|confirmed',
         ];

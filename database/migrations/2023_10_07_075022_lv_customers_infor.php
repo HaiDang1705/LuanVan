@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lv_customer_infor', function (Blueprint $table) {
-            $table->increments('customer_infor_id');
-            $table->string('customer_infor_phone');
-            $table->string('customer_infor_address');
-            $table->integer('customer_infor_user_id')->unsigned();
-            $table->foreign('customer_infor_user_id')
+        Schema::create('lv_customers_infor', function (Blueprint $table) {
+            $table->increments('customers_infor_id');
+            $table->string('address');
+            $table->string('phone');
+            $table->string('image')->nullable();
+            $table->integer('id_customer')->unsigned();
+            $table->foreign('id_customer')
                 ->references('id')
-                ->on('lv_users')
+                ->on('lv_customers')
                 ->onDelete('cascade');
             $table->timestamps();
         });
@@ -33,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lv_customer_infor');
+        Schema::dropIfExists('lv_customers_infor');
     }
 };

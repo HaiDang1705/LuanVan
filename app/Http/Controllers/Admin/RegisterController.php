@@ -19,12 +19,11 @@ class RegisterController extends Controller
     // public function postRegister()
     public function postRegister(AddAccountUserRequest $request)
     {
-        $accountUser = new User;
-        $accountUser->name = $request->name;
-        $accountUser->email = $request->email;
-        $accountUser->role = $request->role;
-        $accountUser->password = bcrypt($request->password);
-        $accountUser->save();
+        $accountAdmin = new User();
+        $accountAdmin->name = $request->name;
+        $accountAdmin->email = $request->email;
+        $accountAdmin->password = bcrypt($request->password);
+        $accountAdmin->save();
 
         // Lưu thông báo thành công vào Session
         Session::flash('success', 'Bạn đã đăng ký thành công');
