@@ -65,13 +65,6 @@
                 <!-- -------------------------------------------------------- -->
 
                 <!-- Thay thế đoạn code đăng nhập và đăng ký -->
-
-                <li class="nav-item">
-                    <a class="nav-link navbar-color" href="{{asset('user/cart/show')}}">
-                        GIỎ HÀNG
-                        <i class="fa fa-shopping-cart icon-color" aria-hidden="true"> ({{Cart::count()}})</i>
-                    </a>
-                </li>
                 @if (Auth::guard('customer')->check())
                 <li class="nav-item">
                     <div class="nav-item dropdown">
@@ -80,7 +73,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <a href="{{asset('user/infor/'.$customer->id)}}" class="dropdown-item">Thông tin của tôi</a>
-                            <a href="{{asset('user/.$customer->id./cart-history')}}" class="dropdown-item">Lịch sử mua hàng</a>
+                            <a href="{{asset('user/cart-history/'.$customer->id)}}" class="dropdown-item">Lịch sử mua hàng</a>
                             <a href="{{asset('user/logout')}}" class="dropdown-item">Đăng xuất</a>
                         </div>
                     </div>
@@ -94,6 +87,19 @@
                     <a class="nav-link" href="{{asset('user/register')}}"> ĐĂNG KÝ</a>
                 </li>
                 @endif
+                <li class="nav-item">
+                    <a class="nav-link navbar-color" href="{{asset('user/cart/show')}}">
+                        GIỎ HÀNG
+                        <!-- Khi khách hàng đã đăng nhập -->
+                        @if(Auth::guard('customer')->check())
+                        <i class="fa fa-shopping-cart icon-color" aria-hidden="true"> ({{$count}})</i>
+                        <!-- Khi khách hàng chưa đăng nhập -->
+                        @else
+                        <i class="fa fa-shopping-cart icon-color" aria-hidden="true"> ({{Cart::count()}})</i>
+                        @endif
+                    </a>
+                </li>
+                
                 <!--  -->
             </ul>
         </div>

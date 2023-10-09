@@ -262,6 +262,8 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
         // Tim kiem
         Route::get('search', 'HomeController@getSearch');
 
+        // Lịch sử mua hàng
+        Route::get('cart-history/{id}', 'CartController@getCartHistory');
 
         // 3. Giỏ hàng - http://127.0.0.1:8000/user/cart
         // Route::group(['prefix' => 'cart', 'middleware' => 'CheckUserLogedIn'], function () {

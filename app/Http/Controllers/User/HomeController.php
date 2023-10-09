@@ -17,6 +17,7 @@ use App\Models\Models\Huyen;
 use App\Models\Models\Tinh;
 use App\Models\Models\Xa;
 use App\Models\Models\CustomerInfor;
+use App\Models\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 
 
@@ -27,6 +28,13 @@ class HomeController extends Controller
         $data['listproducts'] = Product::orderBy('product_id', 'desc')->take(8)->get();
         $customer = Auth::guard('customer')->user();
         $data['customer'] = $customer;
+        if ($customer) {
+            $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
+        } 
+        // else {
+        //     $data['count'] = Cart::count();
+        // }
+        // $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
         // $data['listcategories'] = Category::all();
         // $data['listcategories'] = Category::orderBy('cate_id','desc')->get();
         return view('user.index', $data);
@@ -55,6 +63,9 @@ class HomeController extends Controller
     {
         $data['cateName'] = Category::find($id);
         $data['items'] = Product::where('product_cate', $id)->orderBy('product_id', 'desc')->paginate(8);
+        $customer = Auth::guard('customer')->user();
+        $data['customer'] = $customer;
+        $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
         return view('user.category', $data);
     }
 
@@ -88,13 +99,17 @@ class HomeController extends Controller
         $data['keyword'] = $result;
         $result = str_replace(' ', '%', $result);
         $data['items'] = Product::where('product_name', 'like', '%' . $result . '%')->get();
-
+        $customer = Auth::guard('customer')->user();
+        $data['customer'] = $customer;
+        $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
         return view('user.search', $data);
     }
 
     public function getInfor($id)
     {
         $customer = Auth::guard('customer')->user();
+        $count = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
+        
         // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if ($customer) {
             $data['listtinh'] = Tinh::all();
@@ -104,7 +119,7 @@ class HomeController extends Controller
             // Thay thế CustomerInfor::find($id) bằng CustomerInfor::where('id_customer', $id)->first()
             $data['customerinfo'] = CustomerInfor::where('id_customer', $id)->first();
             // Sử dụng compact để truyền customer vào view
-            return view('user.infor_user', compact('customer', 'data'));
+            return view('user.infor_user', compact('customer', 'data', 'count'));
         } else {
             // Người dùng chưa đăng nhập, bạn có thể chuyển hướng họ đến trang đăng nhập ở đây
             // return redirect()->route('user.login'); // Thay 'login' bằng tên route của trang đăng nhập của bạn

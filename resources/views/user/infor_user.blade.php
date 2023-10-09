@@ -12,10 +12,10 @@
                 <div style="text-align: center;">
                     <input name="image" type="file" id="fileInput" style="display: none;" accept="image/*">
                     <label for="fileInput" style="cursor: pointer;">
-                        @if (empty($customerInfor->image))
-                        <img src="image/default_avatar.jpg" alt="Default Avatar" id="imagePreview" style="width: 186px; border-radius: 20px; margin-top: 28px;">
+                        @if (empty($data['customerinfo']->image))
+                        <img src="image/default_avatar.jpg" alt="Default Avatar" id="" style="width: 186px; border-radius: 20px; margin-top: 28px;">
                         @else
-                        <img src="{{asset('storage/storage/avataruser/'.$customerInfor->image)}}" alt="User Avatar" id="imagePreview" style="width: 186px; border-radius: 20px; margin-top: 28px;">
+                        <img src="{{asset('storage/storage/avataruser/'.$data['customerinfo']->image)}}" alt="User Avatar" id="" style="width: 186px; border-radius: 20px; margin-top: 28px;height: 248px;">
                         @endif
                         <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -100%);background-color: rgba(0, 0, 0, 0.5); color: white; padding: 10px;">Cập nhật hình ảnh</div>
                     </label>
