@@ -12,4 +12,8 @@ class OrderDetail extends Model
     protected $table = 'lv_shipping_details';
     protected $primaryKey = 'id';
     protected $guarded = [];
+    public function shippingState()
+    {
+        return $this->belongsTo(Shipping_States::class, 'shipping_id');
+    }
 }

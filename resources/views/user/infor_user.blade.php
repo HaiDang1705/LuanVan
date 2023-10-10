@@ -30,7 +30,7 @@
                         <i style="color: #EB1616;" class="fa fa-user" aria-hidden="true"></i>
                     </div>
                     <div class="col-10 chitietctyhover">
-                        <a href="{{asset('user/infor')}}" style="color: rgba(0, 0, 0, 0.72) !important; text-decoration: none">Thông tin cá
+                        <a href="{{asset('user/infor/'.$customer->id)}}" style="color: rgba(0, 0, 0, 0.72) !important; text-decoration: none">Thông tin cá
                             nhân</a>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                         <i style="color: #EB1616;" class="fa fa-user-secret" aria-hidden="true"></i>
                     </div>
                     <div class="col-10 chitietctyhover">
-                        <a href="user_doimatkhau.html" style="color: rgba(0, 0, 0, 0.72) !important; text-decoration: none;">Đổi mật
+                        <a href="{{asset('user/infor/reset-pass/'.$customer->id)}}" style="color: rgba(0, 0, 0, 0.72) !important; text-decoration: none;">Đổi mật
                             khẩu</a>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                                     Địa chỉ
                                 </label>
                                 <div class="form-floating mb-3">
-                                    <input name="address" type="address" class="form-control" id="floatingInput" placeholder="Địa chỉ" autofocus="" value="{{ isset($data['customerinfo']) ? $data['customerinfo']->address : '' }}">
+                                    <input name="address" type="address" class="form-control" id="address" placeholder="Địa chỉ" autofocus="" value="{{ isset($data['customerinfo']) ? $data['customerinfo']->address : '' }}">
                                 </div>
                             </div>
                         </div>
@@ -204,6 +204,37 @@
                 });
             });
         });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Sự kiện thay đổi tùy chọn tỉnh
+        $("#tinh_id").change(function() {
+            updateAddress();
+        });
+
+        // Sự kiện thay đổi tùy chọn huyện
+        $("#huyen_id").change(function() {
+            updateAddress();
+        });
+
+        // Sự kiện thay đổi tùy chọn xã
+        $("#xa_id").change(function() {
+            updateAddress();
+        });
+
+        // Hàm cập nhật địa chỉ dựa trên tùy chọn tỉnh, huyện và xã
+        function updateAddress() {
+            var tinh = $("#tinh_id option:selected").text();
+            var huyen = $("#huyen_id option:selected").text();
+            var xa = $("#xa_id option:selected").text();
+            
+            var address = xa + ', ' + huyen + ', ' + tinh;
+            
+            // Gán giá trị địa chỉ vào trường "address" của input
+            $("#address").val(address);
+        }
     });
 </script>
 

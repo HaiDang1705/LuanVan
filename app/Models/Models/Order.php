@@ -12,4 +12,7 @@ class Order extends Model
     protected $table = 'lv_shipping';
     protected $primaryKey = 'shipping_id';
     protected $guarded = [];
+    // protected $casts = [
+    //     'shipping_total' => 'float',
+    // ];
 }

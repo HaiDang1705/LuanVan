@@ -88,7 +88,7 @@
                 </li>
                 @endif
                 <li class="nav-item">
-                    <a class="nav-link navbar-color" href="{{asset('user/cart/show')}}">
+                    <a class="nav-link navbar-color" href="{{ Auth::guard('customer')->check() ? route('cart.show', $customer->id) : route('cart.show') }}">
                         GIỎ HÀNG
                         <!-- Khi khách hàng đã đăng nhập -->
                         @if(Auth::guard('customer')->check())

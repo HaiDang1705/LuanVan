@@ -165,20 +165,24 @@
                                         <!-- <form method="post"> -->
                                         <div class="form-group" style="text-align: left;">
                                             <label style="font-weight: 700;" for="email">Email:</label>
-                                            <input required type="email" class="form-control" id="email" name="email">
+                                            <input required type="email" class="form-control" id="email" name="email" value="{{$customer->email}}">
                                         </div>
                                         <div class="form-group" style="text-align: left;">
                                             <label style="font-weight: 700;" for="name">Họ và tên:</label>
-                                            <input required type="text" class="form-control" id="name" name="name">
+                                            <input required type="text" class="form-control" id="name" name="name" value="{{$customer->name}}">
                                         </div>
+                                        @if($customerinfo)
                                         <div class="form-group" style="text-align: left;">
                                             <label style="font-weight: 700;" for="phone">Số điện thoại:</label>
-                                            <input required type="number" class="form-control" id="phone" name="phone">
+                                            <input required type="number" class="form-control" id="phone" name="phone" value="{{ $customerinfo->phone }}">
                                         </div>
                                         <div class="form-group" style="text-align: left;">
                                             <label style="font-weight: 700;" for="add">Địa chỉ:</label>
-                                            <input required type="text" class="form-control" id="add" name="address">
+                                            <input required type="text" class="form-control" id="add" name="address" value="{{ $customerinfo->address }}">
                                         </div>
+                                        @else
+                                        không hiển thị
+                                        @endif
                                         <div class="form-group" style="text-align: left; display:none">
                                             <div class="row">
                                                 <div class="col-12" style="text-align: left;">
@@ -367,7 +371,7 @@
                                         <h5 style="text-align: left;">Tổng tiền:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <input name="product_total" style="font-weight: bold;" value="{{$total}}"></input>
+                                        <input name="product_total" style="font-weight: bold;" value="{{$total*1000}}"></input>
                                     </div>
                                 </div>
                                 <div class="row">

@@ -73,14 +73,6 @@ class OrderController extends Controller
         return redirect('admin/donhang');
     }
 
-    // Sửa đơn hàng
-    public function getEditOrder()
-    {
-    }
-    public function postEditOrder()
-    {
-    }
-
     // Xóa đơn hàng
     public function getDeleteOrder($id)
     {

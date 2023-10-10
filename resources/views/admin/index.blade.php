@@ -27,7 +27,7 @@
                 <i class="fa fa-chart-area fa-3x text-primary"></i>
                 <div class="ms-3">
                     <p class="mb-2">Tổng doanh thu</p>
-                    <h6 class="mb-0">{{$totalDoanhThu}}.000 VNĐ</h6>
+                    <h6 class="mb-0">{{$totalDoanhThu}} VNĐ</h6>
                 </div>
             </div>
         </div>
@@ -62,18 +62,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($bestSellingProducts as $product)
                     <tr class="text-white">
                         <td>1</td>
-                        <td>INV-0123</td>
-                        <td>Iphone</td>
-                        <td>300</td>
+                        <td>INV-0123</td> <!-- Thay đổi để lấy thông tin hóa đơn nếu cần -->
+                        <td>{{ $product->product->name }}</td> <!-- Thay 'name' bằng tên cột chứa tên sản phẩm trong bảng products -->
+                        <td>{{ $product->total_quantity }}</td>
                     </tr>
-                    <tr class="text-white">
-                        <td>2</td>
-                        <td>INV-0123</td>
-                        <td>Iphone</td>
-                        <td>300</td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

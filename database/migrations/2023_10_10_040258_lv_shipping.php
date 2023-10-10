@@ -32,7 +32,7 @@ return new class extends Migration
                 ->references('states_id')
                 ->on('lv_shipping_states')
                 ->onDelete('cascade');
-            $table->integer('id_customer')->unsigned();
+            $table->integer('id_customer')->unsigned()->nullable();
             $table->foreign('id_customer')
                 ->references('id')
                 ->on('lv_customers')

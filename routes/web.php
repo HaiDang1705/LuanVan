@@ -242,6 +242,8 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
             // Route::group(['prefix' => 'infor', 'middleware' => 'CheckUserIn'], function () {
             Route::get('/{id}', 'HomeController@getInfor');
             Route::post('/{id}', 'HomeController@postInfor');
+            Route::get('reset-pass/{id}', 'HomeController@getInforResetPass')->name('user.infor.reset-pass');;
+            Route::post('reset-pass/{id}', 'HomeController@postInforResetPass');
             Route::get('/{id}/huyen', 'HomeController@getHuyen');
             Route::get('/{id}/xa', 'HomeController@getXa');
         });
@@ -266,12 +268,11 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
         Route::get('cart-history/{id}', 'CartController@getCartHistory');
 
         // 3. Giỏ hàng - http://127.0.0.1:8000/user/cart
-        // Route::group(['prefix' => 'cart', 'middleware' => 'CheckUserLogedIn'], function () {
         Route::group(['prefix' => 'cart'], function () {
             // Route::get('add/{id}', 'CartController@getAddCart');
             Route::get('add/{id}', 'CartController@getAddCart'); // Thêm middleware ở đây
 
-            Route::get('show', 'CartController@getShowCart');
+            Route::get('show/{id?}', 'CartController@getShowCart')->name('cart.show');
             Route::get('delete/{id}', 'CartController@getDeleteCart');
             Route::get('update', 'CartController@getUpdateCart');
             // Route::post('show', 'CartController@postComplete');

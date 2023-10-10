@@ -18,6 +18,8 @@ use App\Models\Models\Tinh;
 use App\Models\Models\Xa;
 use App\Models\Models\CustomerInfor;
 use App\Models\Models\CartItem;
+use App\Models\Models\OrderDetail;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 
@@ -30,13 +32,14 @@ class HomeController extends Controller
         $data['customer'] = $customer;
         if ($customer) {
             $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
-        } 
+        }
         // else {
         //     $data['count'] = Cart::count();
         // }
         // $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
         // $data['listcategories'] = Category::all();
         // $data['listcategories'] = Category::orderBy('cate_id','desc')->get();
+
         return view('user.index', $data);
     }
 
@@ -50,6 +53,12 @@ class HomeController extends Controller
         $data['customer'] = $customer;
         $data['product'] = Product::find($id);
         $data['comments'] = Comment::where('bl_product_id', $id)->get();
+        // Kiểm tra nếu người dùng đã đăng nhập thì tính toán 'count'
+        if ($customer) {
+            $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
+        } else {
+            $data['count'] = 0; // Nếu không đăng nhập, 'count' được đặt thành 0
+        }
 
         // Lượt xem
         $product = Product::find($id);
@@ -109,7 +118,7 @@ class HomeController extends Controller
     {
         $customer = Auth::guard('customer')->user();
         $count = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
-        
+
         // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if ($customer) {
             $data['listtinh'] = Tinh::all();
@@ -182,5 +191,56 @@ class HomeController extends Controller
             Session::flash('error', 'Không tìm thấy khách hàng với email này');
         }
         return back();
+    }
+
+    public function getInforResetPass($id)
+    {
+        $customer = Auth::guard('customer')->user();
+        $count = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
+
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        if ($customer) {
+            $data['listtinh'] = Tinh::all();
+            $data['listhuyen'] = Huyen::all();
+            $data['listxa'] = Xa::all();
+            // $data['customerinfo'] = CustomerInfor::find($id);
+            // Thay thế CustomerInfor::find($id) bằng CustomerInfor::where('id_customer', $id)->first()
+            $data['customerinfo'] = CustomerInfor::where('id_customer', $id)->first();
+            // Sử dụng compact để truyền customer vào view
+            return view('user.infor_user_resetpass', compact('customer', 'data', 'count'));
+        } else {
+            // Người dùng chưa đăng nhập, bạn có thể chuyển hướng họ đến trang đăng nhập ở đây
+            // return redirect()->route('user.login'); // Thay 'login' bằng tên route của trang đăng nhập của bạn
+            return redirect('user/login');
+        }
+    }
+
+    public function postInforResetPass(Request $request, $id)
+    {
+        // Kiểm tra xác thực người dùng đã đăng nhập
+        $customer = Auth::guard('customer')->user();
+        if (!$customer) {
+            return redirect('user/login');
+        }
+
+        // Lấy dữ liệu từ form
+        $oldPassword = $request->input('old_password');
+        $newPassword = $request->input('new_password');
+        $confirmPassword = $request->input('confirm_password');
+
+        // Kiểm tra mật khẩu cũ
+        if (!Hash::check($oldPassword, $customer->password)) {
+            return back()->with('error', 'Mật khẩu cũ không đúng');
+        }
+
+        // Kiểm tra mật khẩu mới và xác nhận mật khẩu mới
+        if ($newPassword !== $confirmPassword) {
+            return back()->with('error', 'Mật khẩu mới không khớp');
+        }
+
+        // Cập nhật mật khẩu mới trong cơ sở dữ liệu
+        Customer::where('id', $customer->id)->update(['password' => bcrypt($newPassword)]);
+
+        return redirect()->route('user.infor.reset-pass', ['id' => $id])->with('success', 'Mật khẩu đã được thay đổi thành công');
     }
 }
