@@ -50,7 +50,7 @@
                                             <img style="width: 60px; object-fit:contain" src="{{asset('storage/storage/avatar/'.$product->image)}}" class="hinhdaidien">
                                         </td>
                                         <td>
-                                            {{$product->name}}
+                                            {{$product->product->product_name}}
                                         </td>
                                         <td class="text-right">
                                             <div class="form-group">
@@ -76,6 +76,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;
+                                TIẾP TỤC MUA SẮM</a>
 
                             <!-- Khi khách hàng không đăng nhập - Khách vãng lai -->
                             @else
@@ -128,6 +130,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;
+                                TIẾP TỤC MUA SẮM</a>
                             @endif
                         </div>
 
@@ -180,6 +184,10 @@
                                             <label style="font-weight: 700;" for="add">Địa chỉ:</label>
                                             <input required type="text" class="form-control" id="add" name="address" value="{{ $customerinfo->address }}">
                                         </div>
+                                        <div class="form-group" style="text-align: left;">
+                                            <label style="font-weight: 700;" for="add">Ghi chú:</label>
+                                            <input type="text" class="form-control" id="add" name="description" value="">
+                                        </div>
                                         @else
                                         không hiển thị
                                         @endif
@@ -228,6 +236,7 @@
             </div>
         </div>
         @else
+        @include('errors.note')
         <h1>Giỏ hàng rỗng</h1>
         @endif
         <!-- --------------------------------------------------------------------------------------------------- -->
@@ -291,6 +300,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;
+                                TIẾP TỤC MUA SẮM</a>
 
                             <!-- Khi khách hàng không đăng nhập - Khách vãng lai -->
                             @else
@@ -343,6 +354,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                            <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;
+                                TIẾP TỤC MUA SẮM</a>
                             @endif
                         </div>
 
@@ -371,7 +384,7 @@
                                         <h5 style="text-align: left;">Tổng tiền:</h5>
                                     </div>
                                     <div class="col-6">
-                                        <input name="product_total" style="font-weight: bold;" value="{{$total*1000}}"></input>
+                                        <input name="product_total" style="font-weight: bold;" value="{{$total}}"></input>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -393,6 +406,10 @@
                                         <div class="form-group" style="text-align: left;">
                                             <label style="font-weight: 700;" for="add">Địa chỉ:</label>
                                             <input required type="text" class="form-control" id="add" name="address">
+                                        </div>
+                                        <div class="form-group" style="text-align: left;">
+                                            <label style="font-weight: 700;" for="add">Ghi chú:</label>
+                                            <input type="text" class="form-control" id="add" name="description" value="">
                                         </div>
                                         <div class="form-group" style="text-align: left; display:none">
                                             <div class="row">
@@ -440,6 +457,7 @@
         </div>
         @else
         <h1>Giỏ hàng rỗng</h1>
+        @include('errors.note')
         @endif
         @endif
         <!-- --------------------------------------------------------------------------------------------------- -->

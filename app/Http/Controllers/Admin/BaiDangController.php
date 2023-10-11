@@ -80,6 +80,7 @@ class BaiDangController extends Controller
         $post->post_slug = Str::slug($request->name);
         $post->post_nguoidang = $request->poster;
         $post->post_mota = $request->description;
+        $post->post_view = 0;
     
         if ($request->hasFile('image')) {
             $img = $request->image->getClientOriginalName();

@@ -261,4 +261,11 @@ class OrderController extends Controller
         </div>';
         return $output;
     }
+
+    // Hàm đếm số lượng sản phẩm được bán
+    public function countSoldProducts()
+    {
+        $totalSoldProducts = DB::table('lv_shipping_details')->sum('quantity');
+        return $totalSoldProducts;
+    }
 }

@@ -13,28 +13,35 @@
                 <thead>
                     <tr class="text-white">
                         <th scope="col">STT</th>
-                        <th scope="col">HÌNH ẢNH</th>
+                        <th scope="col">AVATAR</th>
                         <th scope="col">TÊN KHÁCH HÀNG</th>
                         <th scope="col">SỐ ĐIỆN THOẠI</th>
                         <th scope="col">ĐỊA CHỈ</th>
                         <!-- <th scope="col">THAO TÁC</th> -->
                     </tr>
                 </thead>
+                @php
+                $counter = 1;
+                @endphp
                 <tbody>
-                    @foreach($accountlist as $account)
+                    @foreach($userlist as $account)
                     <tr class="text-white">
-                        <td>{{$account->user_id}}</td>
+                        <td>{{$counter}}</td>
                         <td>
                             <!-- Image -->
+                            <img src="{{asset('storage/storage/avataruser/'.$account->image)}}" height="100px" alt="">
                         </td>
-                        <td>{{$account->user_name}}</td>
-                        <td>{{$account->user_phone}}</td>
-                        <td>{{$account->user_address}}</td>
+                        <td>{{$account->name}}</td>
+                        <td>{{$account->phone}}</td>
+                        <td>{{$account->address}}</td>
                         <!-- <td>
                             <a class="btn btn-sm btn-primary" href="">Xóa</a>
                             <a class="btn btn-sm btn-primary" href="">Edit</a>
                         </td> -->
                     </tr>
+                    @php
+                    $counter++;
+                    @endphp
                     @endforeach
                 </tbody>
             </table>

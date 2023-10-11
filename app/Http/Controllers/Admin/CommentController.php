@@ -32,4 +32,14 @@ class CommentController extends Controller
         Comment::destroy($id);
         return back();
     }
+
+    // Đếm số lượng bình luận
+    public function countComment()
+    {
+        // $totalComments = Comment::count();
+        $totalComments = DB::table('lv_binhluan')
+        ->where('bl_status', 1)
+        ->sum('bl_status');
+        return $totalComments;
+    }
 }

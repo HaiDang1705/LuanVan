@@ -38,20 +38,38 @@ class HomeController extends Controller
             ->sum('shipping_total');
         $data['totalDoanhThu'] = number_format($totalDoanhThu, 0, ',', '.');
 
-        // Tính số lượng sản phẩm bán chạy
-        $data['bestSellingProducts'] = OrderDetail::select('shipping_details_product_id', DB::raw('SUM(quantity) as total_quantity'))
-            ->whereHas('shippingState', function ($query) {
-                $query->where('states_id', 2);
-            })
-            ->groupBy('shipping_details_product_id')
-            ->orderByDesc('total_quantity')
-            ->limit(10) // Thay đổi số lượng sản phẩm bạn muốn lấy
-            ->get();
+        // Tính tổng lợi nhuận (60% của tổng doanh thu)
+        $totalLoiNhuan = $totalDoanhThu * 0.6;
+        $data['totalLoiNhuan'] = number_format($totalLoiNhuan, 0, ',', '.');
 
-        // dd($data['bestSellingProducts']);
+        // Tính tổng số lượng sản phẩm đã bán
+        $totalSoldProducts = (new OrderController)->countSoldProducts();
+        $data['totalSoldProducts'] = $totalSoldProducts;
+
+        // Tính tổng số lượng lượt xem của sản phẩm và bài đăng
+        $totalView = (new ProductController)->countViewProductsAndPosts();
+        $data['totalView'] = $totalView;
+
+        // Tính tổng khách hàng
+        $post = app(UserController::class);
+        $totalCustomers = $post->countCustomer();
+        $data['totalCustomers'] = $totalCustomers;
+
+        // Tính tổng sản phẩm trong tồn trong kho
+        $totalProductsKho = (new ProductController)->countProductKho();
+        $data['totalProductsKho'] = $totalProductsKho;
+
+        // Tính tổng sản phẩm trong tồn trong kho
+        $totalMinusProductsKho = (new ProductController)->minusProductKho();
+        $data['totalMinusProductsKho'] = $totalMinusProductsKho;
+        
+        // Tính tổng số bình luận
+        $totalComments = (new CommentController)->countComment();
+        $data['totalComments'] = $totalComments;
 
         return view('admin.index', $data);
     }
+
     public function getLogout()
     {
         Auth::logout();

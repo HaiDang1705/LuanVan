@@ -124,7 +124,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-6">
-                                <input  name="slug" type="slug" class="form-control" placeholder="Số lượng sản phẩm">
+                                <input name="quantity" type="quantity" class="form-control" placeholder="Số lượng sản phẩm" value="{{$productquantity->product_quantity}}">
                             </div>
                         </div>
                         <!--  -->

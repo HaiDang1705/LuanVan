@@ -84,7 +84,15 @@
                             <img height="100px" src="{{asset('storage/storage/avatar/'.$product->product_image)}}" alt="">
                         </td>
                         <td>{{number_format($product->product_price,0,',','.')}} VND</td>
-                        <td></td>
+                        <td>
+                            <!-- Số lượng sản phẩm: -->
+                            @php
+                            $productQuantity = DB::table('lv_product_quantities')
+                            ->where('product_id', $product->product_id)
+                            ->value('product_quantity');
+                            @endphp
+                            {{$productQuantity}}
+                        </td>
                         <td>
                             <a href="#" class="toggle-action" data-brand="{{ $product->product_id }}">
                                 <div class="toggle-switch {{ $product->product_status == 1 ? 'active' : '' }}">

@@ -8,7 +8,7 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-line fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng sản phẩm</p>
+                    <p class="mb-2">Số sản phẩm</p>
                     <h6 class="mb-0">{{ $totalProducts }}</h6>
                 </div>
             </div>
@@ -17,7 +17,7 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-bar fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng bài đăng</p>
+                    <p class="mb-2">Số bài đăng</p>
                     <h6 class="mb-0">{{ $totalPosts }}</h6>
                 </div>
             </div>
@@ -35,8 +35,84 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-pie fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng đơn hàng</p>
+                    <p class="mb-2">Số đơn hàng</p>
                     <h6 class="mb-0">{{$totalOrders}}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4" style="margin-top: 5px;">
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-line fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Số sản phẩm bán</p>
+                    <h6 class="mb-0">{{$totalSoldProducts}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Tổng lợi nhuận</p>
+                    <h6 class="mb-0">{{$totalLoiNhuan}} VNĐ</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-area fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Số khách hàng</p>
+                    <h6 class="mb-0">{{$totalCustomers}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Tổng lượt xem</p>
+                    <h6 class="mb-0">{{$totalView}}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4" style="margin-top: 5px;">
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-line fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Tổng sản phẩm tồn</p>
+                    <h6 class="mb-0">{{$totalProductsKho}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Tổng sản phẩm xuất</p>
+                    <h6 class="mb-0">{{$totalMinusProductsKho}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-area fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Số bình luận</p>
+                    <h6 class="mb-0">{{$totalComments}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                <i class="fa fa-chart-pie fa-3x text-primary"></i>
+                <div class="ms-3">
+                    <p class="mb-2">Tổng lượt xem</p>
+                    <h6 class="mb-0"></h6>
                 </div>
             </div>
         </div>
@@ -46,6 +122,33 @@
 
 <!-------------------------------------------- BẮT ĐẦU THAY ĐỔI NỘI DUNG ---------------------->
 <!-- Recent Sales Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="align-items-center justify-content-between mb-4">
+            <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">TOP 5 SẢN PHẨM BÁN CHẠY</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                    <tr class="text-white">
+                        <th scope="col">STT</th>
+                        <th scope="col">TÊN SẢN PHẨM</th>
+                        <th scope="col">ĐÃ BÁN</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr class="text-white">
+                        <td>1</td>
+                        <td>SƠN JONTUN</td> <!-- Thay đổi để lấy thông tin hóa đơn nếu cần -->
+                        <td>10</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div class="align-items-center justify-content-between mb-4">
@@ -62,14 +165,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($bestSellingProducts as $product)
+                    
                     <tr class="text-white">
                         <td>1</td>
                         <td>INV-0123</td> <!-- Thay đổi để lấy thông tin hóa đơn nếu cần -->
-                        <td>{{ $product->product->name }}</td> <!-- Thay 'name' bằng tên cột chứa tên sản phẩm trong bảng products -->
-                        <td>{{ $product->total_quantity }}</td>
+                        <td>1</td> <!-- Thay 'name' bằng tên cột chứa tên sản phẩm trong bảng products -->
+                        <td>1</td>
                     </tr>
-                    @endforeach
+                    
                 </tbody>
             </table>
         </div>

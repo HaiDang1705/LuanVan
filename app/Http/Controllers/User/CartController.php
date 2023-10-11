@@ -12,8 +12,11 @@ use App\Models\Models\OrderDetail;
 use App\Models\Models\Shipping_Status;
 use App\Models\Models\Shipping_States;
 use App\Models\Models\CustomerInfor;
+use App\Models\Models\ProductQuantity;
 use \Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
 // use \Hardevine\Shoppingcart\Facades\Cart;
 // use Cart;
 
@@ -39,14 +42,27 @@ class CartController extends Controller
         $product = Product::find($id);
 
         if (Auth::guard('customer')->check()) {
-            CartItem::create([
-                'id_customer' => auth::guard('customer')->user()->id, // Lấy ID của người dùng đã đăng nhập
-                'id_product' => $id,
-                'quantity' => 1,
-                'price' => $product->product_price,
-                'image' => $product->product_image,
-                // Các trường khác bạn muốn lưu vào bảng cart_items
-            ]);
+            $customerID = auth::guard('customer')->user()->id;
+            $existingCartItem = CartItem::where('id_customer', $customerID)
+                ->where('id_product', $id)
+                ->first();
+
+            if ($existingCartItem) {
+                // Tăng số lượng sản phẩm trong giỏ hàng hiện có
+                $existingCartItem->quantity += 1;
+                $existingCartItem->save();
+            } else {
+                // Tạo bản ghi mới trong bảng cart_items
+                CartItem::create([
+                    'id_customer' => $customerID,
+                    'id_product' => $id,
+                    'quantity' => 1,
+                    'price' => $product->product_price,
+                    'image' => $product->product_image,
+                    // Các trường khác bạn muốn lưu vào bảng cart_items
+                ]);
+            }
+
             // Đã đăng nhập, chuyển hướng đến route với ID
             return redirect()->route('cart.show', ['id' => auth()->guard('customer')->user()->id]);
         } else {
@@ -75,7 +91,9 @@ class CartController extends Controller
             $customer = Auth::guard('customer')->user();
             $data['total'] = 0; // Khởi tạo tổng giá trị ban đầu
             $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
-            $data['products'] = CartItem::where('id_customer', $customer->id)->get();
+            // $data['products'] = CartItem::where('id_customer', $customer->id)->get();
+            $data['products'] = CartItem::where('id_customer', $customer->id)->with('product')->get();
+            // dd($data['products']);
             $data['liststatus'] = Shipping_Status::all();
             $data['liststates'] = Shipping_States::all();
             $data['customer'] = $customer;
@@ -104,7 +122,8 @@ class CartController extends Controller
                 $data['phone'] = null;
             }
         } else {
-            $data['total'] = intval(Cart::total());
+            $data['total'] = intVal(Cart::total()) * 1000;
+            // $data['total'] = Cart::total();
             $data['products'] = Cart::content();
             $data['liststatus'] = Shipping_Status::all();
             $data['liststates'] = Shipping_States::all();
@@ -119,8 +138,10 @@ class CartController extends Controller
     {
         if (Auth::guard('customer')->check()) {
             CartItem::destroy($id);
+            Session::flash('success', 'Bạn đã xóa sản phẩm thành công');
         } else {
             Cart::remove($id);
+            Session::flash('success', 'Bạn đã xóa sản phẩm thành công');
         }
         return back();
     }
@@ -147,10 +168,14 @@ class CartController extends Controller
         $order->shipping_email = $request->email;
         $order->shipping_phone = $request->phone;
         $order->shipping_address = $request->address;
+        $order->shipping_description = $request->description;
         $order->shipping_status = $request->status;
         $order->shipping_states = $request->states;
         $order->shipping_slug = $request->product_slug;
-        // $order->shipping_total = $request->product_total;
+        $order->shipping_total = $request->product_total;
+
+        // Lưu thông tin đơn hàng trước để có shipping_id
+        $order->save();
 
         if (Auth::guard('customer')->check()) {
             // Người dùng đã đăng nhập, bạn có thể sử dụng thông tin của họ ở đây
@@ -164,7 +189,8 @@ class CartController extends Controller
             $order->shipping_total = (int) $request->product_total;
         }
 
-        $order->save();
+        // Kiểm tra coi có đủ sản phẩm để bán không. Nếu đủ mới lưu order
+        // $order->save();
 
         // Lưu chi tiết đơn hàng (sản phẩm từ giỏ hàng) vào bảng OrderDetail
         if (Auth::guard('customer')->check()) {
@@ -172,6 +198,8 @@ class CartController extends Controller
         } else {
             $cartItems = Cart::content();
         }
+
+        $hasError = false; // Biến cờ để kiểm tra lỗi
 
         foreach ($cartItems as $cartItem) {
             $orderDetail = new OrderDetail;
@@ -196,23 +224,54 @@ class CartController extends Controller
                 $orderDetail->price = $cartItem->price;
             }
 
-            // $orderDetail->shipping_details_product_id = $cartItem->id_product;
-            // $orderDetail->quantity = $cartItem->quantity;
-            // $orderDetail->price = $cartItem->price;
-            // $orderDetail->image = $cartItem->image;
-            
-            // Lưu chi tiết đơn hàng vào cơ sở dữ liệu
-            $orderDetail->save();
+            // Kiểm tra số lượng sản phẩm có sẵn trong kho
+            $productId = $orderDetail->shipping_details_product_id;
+            $productQuantity = ProductQuantity::where('product_id', $productId)->value('product_quantity');
+
+            if ($orderDetail->quantity > $productQuantity) {
+                // Số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho
+                Session::flash('error', 'Sản phẩm bạn đặt hiện không có đủ trong kho. Chúng tôi rất xin lỗi bạn.');
+                $hasError = true; // Đặt biến cờ để báo có lỗi
+                break; // Thoát khỏi vòng lặp
+                // return redirect()->back();
+            } else {
+                // Giảm số lượng sản phẩm trong bảng lv_product_quantities
+                ProductQuantity::where('product_id', $productId)
+                    ->decrement('product_quantity', $orderDetail->quantity);
+                // Lưu chi tiết đơn hàng vào cơ sở dữ liệu
+                $orderDetail->save();
+            }
+        }
+
+        if (!$hasError) {
+            // Nếu không có lỗi, lưu đơn hàng
+            $order->save();
+        } else {
+            $order->destroy($order->shipping_id);
+        }
+
+        if (!$hasError) {
+            // Xóa giỏ hàng sau khi lưu đơn hàng
+            if (Auth::guard('customer')->check()) {
+                CartItem::where('id_customer', $customer->id)->delete();
+            } else {
+                Cart::destroy();
+            }
+
+            return back()->with('success', 'Đơn hàng đã được đặt thành công');
+        } else {
+            // Nếu có lỗi, không lưu đơn hàng và chuyển hướng trở lại
+            return redirect()->back();
         }
 
         // Xóa giỏ hàng sau khi lưu đơn hàng
-        if (Auth::guard('customer')->check()) {
-            CartItem::where('id_customer', $customer->id)->delete();
-        } else {
-            Cart::destroy();
-        }
+        // if (Auth::guard('customer')->check()) {
+        //     CartItem::where('id_customer', $customer->id)->delete();
+        // } else {
+        //     Cart::destroy();
+        // }
 
-        return back()->with('success', 'Đơn hàng đã được đặt thành công');
+        // return back()->with('success', 'Đơn hàng đã được đặt thành công');
     }
 
     public function getCartHistory($id)

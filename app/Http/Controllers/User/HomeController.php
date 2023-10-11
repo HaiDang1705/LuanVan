@@ -27,18 +27,23 @@ class HomeController extends Controller
 {
     public function getHome()
     {
-        $data['listproducts'] = Product::orderBy('product_id', 'desc')->take(8)->get();
+        $data['listproducts'] = Product::orderBy('product_id', 'desc')
+        ->take(8)
+        ->leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
+        ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
+        ->where('lv_product.product_status', 1)
+        ->get();
         $customer = Auth::guard('customer')->user();
         $data['customer'] = $customer;
         if ($customer) {
             $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
         }
-        // else {
-        //     $data['count'] = Cart::count();
-        // }
-        // $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
-        // $data['listcategories'] = Category::all();
-        // $data['listcategories'] = Category::orderBy('cate_id','desc')->get();
+
+        // $data['listproduct'] = DB::table('lv_product')
+        //     ->leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
+        //     ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
+        //     ->orderBy('lv_product.product_id', 'asc')
+        //     ->get();
 
         return view('user.index', $data);
     }
@@ -74,7 +79,11 @@ class HomeController extends Controller
         $data['items'] = Product::where('product_cate', $id)->orderBy('product_id', 'desc')->paginate(8);
         $customer = Auth::guard('customer')->user();
         $data['customer'] = $customer;
-        $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
+        if ($customer) {
+            $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
+        } else {
+            $data['count'] = 0; // Nếu không đăng nhập, 'count' được đặt thành 0
+        }
         return view('user.category', $data);
     }
 
@@ -110,7 +119,11 @@ class HomeController extends Controller
         $data['items'] = Product::where('product_name', 'like', '%' . $result . '%')->get();
         $customer = Auth::guard('customer')->user();
         $data['customer'] = $customer;
-        $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
+        if ($customer) {
+            $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
+        } else {
+            $data['count'] = 0; // Nếu không đăng nhập, 'count' được đặt thành 0
+        }
         return view('user.search', $data);
     }
 

@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     @foreach($userlist as $user)
-                    @if($user->role == 2)
+                    
                     <tr class="text-white">
                         <td>{{$user->id}}</td>
                         <td>{{$user->name}}</td>
@@ -30,7 +30,7 @@
                             <a class="btn btn-sm btn-primary" href="{{asset('admin/listadmin/edit')}}">Edit</a>
                         </td> -->
                     </tr>
-                    @endif
+                    
                     @endforeach
                 </tbody>
             </table>
