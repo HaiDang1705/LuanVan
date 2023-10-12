@@ -55,6 +55,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
         // 2. Index - http://127.0.0.1:8000/admin/index
         Route::get('index', 'HomeController@getHome');
 
+
         // 3. Danh sach NQT - http://127.0.0.1:8000/admin/quantrivien
         Route::group(['prefix' => 'quantrivien'], function () {
             Route::get('/', 'ListAdminController@getListAdmin');
@@ -234,6 +235,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::get('delete/{id}', 'OrderController@getDeleteOrder');
             // In don hang
             Route::get('printorder/{checkout_code}', 'OrderController@printOrder');
+        });
+
+        Route::group(['prefix' => 'nhap-xuat'], function () {
+            Route::get('/', 'ImportController@getImport');
+            // Tim kiem
+            Route::get('search', 'ImportController@getSearch');
         });
     });
 });

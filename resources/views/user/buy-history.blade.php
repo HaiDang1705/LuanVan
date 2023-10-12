@@ -49,7 +49,7 @@
         </tbody>
     </table>
     @else
-    <h3 style="text-align: center;color: #155724; background-color: #d4edda; border-color: #c3e6cb; padding: 8px;">Hãy đặt hàng đi nào !</h3>
+    <p class="alert alert-success">Hãy đặt hàng đi nào !</p>
     @endif
 </div>
 @stop

@@ -52,6 +52,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             // onDelete('cascade') => xoa danh muc => tat ca san pham trong danh muc deu bi xoa => toan ven du lieu
             // 
+            $table->integer('product_quantity_to_add')->default(0);
             $table->timestamps();
         });
     }

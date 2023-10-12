@@ -104,6 +104,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-cart-plus" aria-hidden="true"></i>Quản lý đơn hàng</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="{{asset('admin/donhang')}}" class="dropdown-item">Đơn hàng</a>
+                            <a href="{{asset('admin/nhap-xuat')}}" class="dropdown-item">Nhập - Xuất kho</a>
                         </div>
                     </div>
                 </div>

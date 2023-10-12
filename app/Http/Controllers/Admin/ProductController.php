@@ -43,6 +43,7 @@ class ProductController extends Controller
         $data['listcolor'] = Color::all();
         return view('admin.add_sanpham', $data);
     }
+    
     public function postAddProduct(AddProductRequest $request)
     {
         $filename = $request->image->getClientOriginalName();
