@@ -39,12 +39,6 @@ class HomeController extends Controller
             $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity');
         }
 
-        // $data['listproduct'] = DB::table('lv_product')
-        //     ->leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
-        //     ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
-        //     ->orderBy('lv_product.product_id', 'asc')
-        //     ->get();
-
         return view('user.index', $data);
     }
 
@@ -73,6 +67,8 @@ class HomeController extends Controller
         return view('user.product', $data);
     }
 
+
+    // Tìm kiếm dựa vào danh mục - category
     public function getCategory($id)
     {
         $data['cateName'] = Category::find($id);

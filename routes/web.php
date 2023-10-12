@@ -216,11 +216,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
         // 14. quanly_donhang ( donhang ) - http://127.0.0.1:8000/admin/donhang - Hiển thị/Thêm/Sửa/Xóa mau don hang
         Route::group(['prefix' => 'donhang'], function () {
             Route::get('/', 'OrderController@getOrder');
+            Route::get('/{id}', 'OrderController@getShippingStates');
 
             Route::get('chitiet/{id}', 'OrderController@getChiTietOrder');
             Route::post('chitiet/{id}', 'OrderController@postChiTietOrder');
             // Chi tiết đơn theo id
             // Route::get('{id}', 'OrderController@getChiTietOrder');
+
+            // Hiển thị các sản phẩm đã xử lý hoặc chưa xử lý dựa vào states_id
+            Route::get('shippingstates/{states_id}', 'OrderController@getShippingStates');
 
             // CHỉnh sửa đơn hàng
             Route::get('edit/{id}', 'OrderController@getEditOrder');
@@ -265,7 +269,9 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
         Route::get('search', 'HomeController@getSearch');
 
         // Lịch sử mua hàng
-        Route::get('cart-history/{id}', 'CartController@getCartHistory');
+        Route::get('cart-history/{order_id}', 'CartController@getCartHistory');
+        Route::get('buy-history/{id}', 'CartController@getBuyHistory');
+        Route::get('buy-history/delete/{id}', 'CartController@cancelOrder');
 
         // 3. Giỏ hàng - http://127.0.0.1:8000/user/cart
         Route::group(['prefix' => 'cart'], function () {

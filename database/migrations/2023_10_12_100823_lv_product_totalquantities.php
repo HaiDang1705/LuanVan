@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lv_product_quantities', function (Blueprint $table) {
+        Schema::create('lv_product_totalquantites', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('product_id')->unsigned();
             $table->foreign('product_id')
                 ->references('product_id')
                 ->on('lv_product')
                 ->onDelete('cascade');
-            $table->integer('product_quantity');
+            $table->integer('total_quantity');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lv_product_quantities');
+        Schema::dropIfExists('lv_product_totalquantites');
     }
 };

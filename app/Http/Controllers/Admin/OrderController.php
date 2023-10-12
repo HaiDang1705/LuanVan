@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Models\Order;
 use App\Models\Models\OrderCart;
 use App\Models\Models\OrderDetail;
+use App\Models\Models\ProductQuantity;
 use App\Models\Models\Shipping_States;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -19,13 +20,13 @@ class OrderController extends Controller
     // Hiển thị đơn hàng
     public function getOrder()
     {
-        // $data['orderlist'] = Order::all();
-        // $data['orderdetail'] = OrderDetail::all();
         $data['orderlist'] = DB::table('lv_shipping')
             ->join('lv_shipping_status', 'lv_shipping.shipping_status', '=', 'lv_shipping_status.status_id')
             ->orderBy('lv_shipping.shipping_id', 'asc')
             ->get();
-        // $data['ordercart'] = OrderCart::all();
+
+        $data['shippingstates'] = Shipping_States::all();
+
         return view('admin.quanly_donhang', $data);
     }
 
@@ -65,6 +66,26 @@ class OrderController extends Controller
         return view('admin.chitiet_donhang', $data);
     }
 
+    // Tìm kiếm dựa vào Shipping_states ( đã xử lý / chưa xử lý )
+    public function getShippingStates($states_id = null)
+    {
+        $data['orderlist'] = DB::table('lv_shipping')
+            ->join('lv_shipping_status', 'lv_shipping.shipping_status', '=', 'lv_shipping_status.status_id')
+            ->orderBy('lv_shipping.shipping_id', 'asc');
+
+        // Kiểm tra nếu $states_id được chọn thì áp dụng bộ lọc, nếu không, hiển thị tất cả.
+        if ($states_id !== null && $states_id != 0) {
+            $data['orderlist'] = $data['orderlist']->where('lv_shipping.shipping_states', $states_id);
+        }
+
+        $data['orderlist'] = $data['orderlist']->get();
+        $data['shippingstates'] = Shipping_States::all();
+
+        return view('admin.quanly_donhang_states', $data);
+    }
+
+
+    // Xử lý shipping_states - đã xử lý/chưa xử lý
     public function postChiTietOrder(Request $request, $id)
     {
         $order = Order::find($id);
@@ -76,6 +97,20 @@ class OrderController extends Controller
     // Xóa đơn hàng
     public function getDeleteOrder($id)
     {
+        // Lấy thông tin chi tiết đơn hàng
+        $orderDetails = OrderDetail::where('shipping_id', $id)->get();
+
+        foreach ($orderDetails as $orderDetail) {
+            // Lấy thông tin sản phẩm và số lượng đã mua
+            $productId = $orderDetail->shipping_details_product_id;
+            $quantityPurchased = $orderDetail->quantity;
+
+            // Cộng lại số lượng vào bảng lv_product_quantities
+            $productQuantity = ProductQuantity::where('product_id', $productId)->first();
+            $productQuantity->product_quantity += $quantityPurchased;
+            $productQuantity->save();
+        }
+
         Order::destroy($id);
         return back();
     }

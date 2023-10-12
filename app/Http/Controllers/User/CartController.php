@@ -274,14 +274,76 @@ class CartController extends Controller
         // return back()->with('success', 'Đơn hàng đã được đặt thành công');
     }
 
-    public function getCartHistory($id)
+    // Hàm hiển thị chi tiết đơn hàng
+    public function getBuyHistory($id)
     {
+        // Lấy ra đơn hàng có id của user
+
         // Truy vấn CSDL để lấy lịch sử mua hàng của khách hàng có id_customer là $id
-        $cartHistory = CartItem::where('id_customer', $id)->get();
+        $customer = Auth::guard('customer')->user();
+        $buyHistory = Order::where('id_customer', $customer->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $count = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
+
+        // Trả về view hiển thị lịch sử mua hàng và truyền biến $buyHistory vào view
+        return view('user.buy-history', ['buyHistory' => $buyHistory, 'customer' => $customer, 'count' => $count]);
+    }
+
+    // Hàm hiển thị chi tiết sản phẩm trong từng đơn hàng dựa vào $order_id
+    public function getCartHistory($order_id)
+    {
         $customer = Auth::guard('customer')->user();
         $count = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
 
+        // Lấy đơn hàng dựa trên ID của đơn hàng và ID của khách hàng
+        $order = Order::where('shipping_id', $order_id)
+            ->where('id_customer', $customer->id)
+            ->first();
+
+        // Kiểm tra xem đơn hàng có tồn tại không
+        if (!$order) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn hàng');
+        }
+
+        // Lấy danh sách sản phẩm trong đơn hàng
+        $orderDetails = OrderDetail::where('shipping_id', $order_id)->get();
+
         // Trả về view hiển thị lịch sử mua hàng và truyền biến $cartHistory vào view
-        return view('user.cart-history', ['cartHistory' => $cartHistory, 'customer' => $customer, 'count' => $count]);
+        // return view('user.cart-history', ['cartHistory' => $cartHistory, 'customer' => $customer, 'count' => $count]);
+        return view('user.cart-history', ['order' => $order, 'orderDetails' => $orderDetails, 'customer' => $customer, 'count' => $count]);
+    }
+
+    // Hàm hủy đơn hàng
+    public function cancelOrder($id)
+    {
+        $customer = Auth::guard('customer')->user();
+
+        // Kiểm tra xem đơn hàng có tồn tại và thuộc về khách hàng đang đăng nhập không
+        $order = Order::where('shipping_id', $id)
+            ->where('id_customer', $customer->id)
+            ->first();
+
+        if (!$order) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn hàng');
+        }
+
+        // Lấy danh sách chi tiết đơn hàng
+        $orderDetails = OrderDetail::where('shipping_id', $id)->get();
+
+        foreach ($orderDetails as $orderDetail) {
+            $productId = $orderDetail->shipping_details_product_id;
+            $quantityPurchased = $orderDetail->quantity;
+
+            // Cộng lại số lượng vào bảng lv_product_quantities
+            $productQuantity = ProductQuantity::where('product_id', $productId)->first();
+            $productQuantity->product_quantity += $quantityPurchased;
+            $productQuantity->save();
+        }
+
+        // Xóa đơn hàng
+        Order::destroy($id);
+
+        return redirect()->back()->with('success', 'Đơn hàng đã hủy thành công');
     }
 }

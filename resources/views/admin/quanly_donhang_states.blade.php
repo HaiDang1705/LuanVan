@@ -13,9 +13,9 @@
                 @foreach($shippingstates as $shippingstates)
                 <option value="{{$shippingstates->states_id}}">
                     @if($shippingstates->states_id == 1)
-                    Chưa xử lý
+                        Chưa xử lý
                     @else
-                    Đã xử Lý
+                        Đã xử Lý
                     @endif
                 </option>
                 @endforeach

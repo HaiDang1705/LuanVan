@@ -73,7 +73,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <a href="{{asset('user/infor/'.$customer->id)}}" class="dropdown-item">Thông tin của tôi</a>
-                            <a href="{{asset('user/cart-history/'.$customer->id)}}" class="dropdown-item">Lịch sử mua hàng</a>
+                            <a href="{{asset('user/buy-history/'.$customer->id)}}" class="dropdown-item">Lịch sử mua hàng</a>
                             <a href="{{asset('user/logout')}}" class="dropdown-item">Đăng xuất</a>
                         </div>
                     </div>

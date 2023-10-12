@@ -85,7 +85,7 @@
                         <th scope="col">TÊN SẢN PHẨM</th>
                         <th scope="col">SỐ LƯỢNG</th>
                         <th scope="col">GIÁ TIỀN</th>
-                        <th scope="col">TỔNG TIỀN</th>
+                        <th scope="col">THÀNH TIỀN</th>
                     </tr>
                 </thead>
                 @php

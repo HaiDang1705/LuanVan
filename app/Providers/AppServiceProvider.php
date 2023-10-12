@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Models\Category;
+use App\Models\Models\Shipping_States;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         $data['listcategories']= Category::all();
+        // $data['shippingstates'] = Shipping_States::all();
         view()->share($data);
     }
 }
