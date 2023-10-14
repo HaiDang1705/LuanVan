@@ -32,6 +32,9 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"> -->
 </head>
 
 <body>
@@ -235,6 +238,25 @@
                     $("#thongke a").removeClass("active");
                     // Thêm lớp active vào liên kết vừa được nhấp
                     $(this).addClass("active");
+                });
+            });
+        </script>
+
+        <script type="text/javascript">
+            $(function() {
+                $("#datepicker").datepicker({
+                    prevText: "Tháng trước",
+                    nextText: "Tháng sau",
+                    dateFormat: "yy-mm-dd",
+                    dayNamesMin: [ "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật" ],
+                    duration: "slow"
+                });
+                $("#datepicker2").datepicker({
+                    prevText: "Tháng trước",
+                    nextText: "Tháng sau",
+                    dateFormat: "yy-mm-dd",
+                    dayNamesMin: [ "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật" ],
+                    duration: "slow"
                 });
             });
         </script>

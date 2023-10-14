@@ -125,6 +125,45 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div class="align-items-center justify-content-between mb-4">
+            <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">THỐNG KÊ ĐƠN HÀNG DOANH SỐ</h6>
+        </div>
+        <!--  -->
+        <div class="align-items-center justify-con  tent-between mb-4">
+            <form autocomplete="off" action="">
+                <div class="row">
+                    <div class="col-2" style="text-align: left;">
+                        <p>Từ ngày: <input type="text" id="datepicker" class="form-control"></p>
+                        <input type="button" name="submit" class="btn btn-primary btn-sm" id="btn-dashboard-filter" value="Lọc kết quả">
+                    </div>
+                    <div class="col-2" style="text-align: left;">
+                        <p>Đến ngày: <input type="text" id="datepicker2" class="form-control"></p>
+                    </div>
+                    <div class="col-2" style="text-align: left;">
+                        <p>
+                            Lọc theo:
+                            <select id="filter-select" class="dashboard-filter form-control" style="text-align: center;">
+                                <option>--Chọn--</option>
+                                <option value="7ngay">7 ngày qua</option>
+                                <option value="thangtruoc">Tháng này</option>
+                                <option value="365ngayqua">365 ngày qua</option>
+                            </select>
+                        </p>
+                    </div>
+                </div>
+                {{csrf_field()}}
+            </form>
+        </div>
+
+        <!-- BIểu đồ -->
+        <div class="col-md-12">
+            <div id="myfirstchart"></div>
+        </div>
+
+    </div>
+</div>
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="align-items-center justify-content-between mb-4">
             <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">TOP 5 SẢN PHẨM BÁN CHẠY</h6>
         </div>
         <div class="table-responsive">
@@ -133,46 +172,17 @@
                     <tr class="text-white">
                         <th scope="col">STT</th>
                         <th scope="col">TÊN SẢN PHẨM</th>
-                        <th scope="col">ĐÃ BÁN</th>
+                        <th scope="col">SỐ LƯỢNG ĐÃ BÁN</th>
                     </tr>
                 </thead>
-                <tbody>
-
-                    <tr class="text-white">
-                        <td>1</td>
-                        <td>SƠN JONTUN</td> <!-- Thay đổi để lấy thông tin hóa đơn nếu cần -->
-                        <td>10</td>
+                <tbody style="text-align: center;">
+                    @foreach ($bestSellingProducts as $key => $product)
+                    <tr>
+                        <td style="color: #ccc">{{ $key + 1 }}</td>
+                        <td style="color: #ccc">{{ $product['product_name'] }}</td>
+                        <td style="color: #ccc">{{ $product['total_sold'] }}</td>
                     </tr>
-                    
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="container-fluid pt-4 px-4">
-    <div class="bg-secondary text-center rounded p-4">
-        <div class="align-items-center justify-content-between mb-4">
-            <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">KẾT QUẢ DOANH THU THEO NĂM</h6>
-        </div>
-        <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
-                <thead>
-                    <tr class="text-white">
-                        <th scope="col">STT</th>
-                        <th scope="col">TÊN SẢN PHẨM</th>
-                        <th scope="col">LOẠI SẢN PHẨM</th>
-                        <th scope="col">SỐ LƯỢNG ĐƠN ĐẶT HÀNG</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr class="text-white">
-                        <td>1</td>
-                        <td>INV-0123</td> <!-- Thay đổi để lấy thông tin hóa đơn nếu cần -->
-                        <td>1</td> <!-- Thay 'name' bằng tên cột chứa tên sản phẩm trong bảng products -->
-                        <td>1</td>
-                    </tr>
-                    
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -217,29 +227,180 @@
 <!-- Recent Sales End -->
 <!-------------------------------------------- KẾT THÚC THAY ĐỔI NỘI DUNG ---------------------->
 
-<!-- <script>
-    $(document).ready(function() {
-        $("#thongke a").click(function() {
-            // Loại bỏ lớp active từ tất cả các liên kết trong phần tử có id "thongke"
-            $("#thongke a").removeClass("active");
-            // Thêm lớp active vào liên kết vừa được nhấp
-            $(this).addClass("active");
-        });
-    });
-</script> -->
+
 @stop
 
 @section('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <!-- <script>
-    $(document).ready(function() {
-        $("#thongke a").click(function() {
-            // Loại bỏ lớp active từ tất cả các liên kết trong phần tử có id "thongke"
-            $("#thongke a").removeClass("active");
-            // Thêm lớp active vào liên kết vừa được nhấp
-            $(this).addClass("active");
+    // Dữ liệu mẫu cho biểu đồ
+    var sampleData = [
+        { y: '2023-01-01', a: 50 },
+        { y: '2023-01-02', a: 75 },
+        { y: '2023-01-03', a: 30 },
+        // Thêm dữ liệu cho các ngày khác ở đây
+    ];
+
+    // Khởi tạo biểu đồ Morris
+    var chart = Morris.Line({
+        element: 'myfirstchart', // ID của phần tử để vẽ biểu đồ
+        data: sampleData,
+        xkey: 'y', // Trường chứa dữ liệu thời gian (ngày)
+        ykeys: ['a'], // Trường chứa dữ liệu giá trị
+        labels: ['Giá trị'], // Nhãn cho dữ liệu
+        xLabels: "day",
+        parseTime: false,
+        hideHover: 'auto',
+        resize: true,
+        lineColors: ['#EB1616']
+    });
+
+    // Xử lý sự kiện khi người dùng click vào nút "Lọc kết quả"
+    document.getElementById('btn-dashboard-filter').addEventListener('click', function () {
+        // Lấy ngày bắt đầu và kết thúc từ input
+        var fromDate = document.getElementById('datepicker').value;
+        var toDate = document.getElementById('datepicker2').value;
+
+        // Thực hiện lọc dữ liệu theo khoảng thời gian được chọn
+        var filteredData = sampleData.filter(function (item) {
+            return item.y >= fromDate && item.y <= toDate;
+        });
+
+        // Cập nhật dữ liệu cho biểu đồ
+        chart.setData(filteredData);
+    });
+</script> -->
+<script>
+    var doanhSoData = @json($doanhSoData);
+    var chart = Morris.Bar({
+        element: 'myfirstchart',
+        data: doanhSoData, // Sử dụng biến JSON
+        xkey: 'created_at',
+        ykeys: ['doanh_so', 'loi_nhuan'],
+        labels: ['Doanh số', 'Lợi nhuận'],
+        parseTime: false,
+        xLabels: "day",
+        hideHover: 'auto',
+        resize: true,
+        lineColors: ['#EB1616', '#34A853'],
+    });
+
+    // Xử lý sự kiện khi người dùng click vào nút "Lọc kết quả"
+    document.getElementById('btn-dashboard-filter').addEventListener('click', function() {
+        var fromDate = document.getElementById('datepicker').value;
+        var toDate = document.getElementById('datepicker2').value;
+
+        var filterSelect = document.getElementById('filter-select').value;
+
+        // Tính toán ngày bắt đầu và ngày kết thúc dựa vào lựa chọn
+        if (filterSelect === '7ngay') {
+            // Tính ngày 7 ngày trước
+            var sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            fromDate = sevenDaysAgo.toISOString().split('T')[0];
+            toDate = new Date().toISOString().split('T')[0]; // Cập nhật toDate thành ngày hiện tại
+            // Loại bỏ thời gian khỏi fromDate
+            fromDate = fromDate.split('T')[0];
+        } else if (filterSelect === 'thangtruoc') {
+            // Tính ngày đầu của tháng hiện tại
+            var today = new Date();
+            fromDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+            toDate = new Date().toISOString().split('T')[0]; // Cập nhật toDate thành ngày hiện tại
+            fromDate = fromDate.split('T')[0];
+        } else if (filterSelect === '365ngayqua') {
+            // Tính ngày 365 ngày trước
+            var threeSixtyFiveDaysAgo = new Date();
+            threeSixtyFiveDaysAgo.setDate(threeSixtyFiveDaysAgo.getDate() - 365);
+            fromDate = threeSixtyFiveDaysAgo.toISOString().split('T')[0];
+            toDate = new Date().toISOString().split('T')[0]; // Cập nhật toDate thành ngày hiện tại
+            fromDate = fromDate.split('T')[0];
+        }
+
+        // Thực hiện truy vấn cơ sở dữ liệu và cập nhật biểu đồ
+        $.ajax({
+            url: '{{url("admin/index/filter")}}', // Điều này cần được định nghĩa trong routes.php
+            data: {
+                from_date: fromDate,
+                to_date: toDate
+            },
+            type: 'GET',
+            success: function(data) {
+                chart.setData(data);
+            }
+        });
+    });
+</script>
+<!-- <script type="text/javascript">
+    $(function() {
+        $("#datepicker").datepicker({
+            prevText: "Tháng trước",
+            nextText: "Tháng sau",
+            dateFormat: "yy-mm-dd",
+            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
+            duration: "slow"
+        });
+        $("#datepicker2").datepicker({
+            prevText: "Tháng trước",
+            nextText: "Tháng sau",
+            dateFormat: "yy-mm-dd",
+            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
+            duration: "slow"
         });
     });
 </script> -->
+
+<script type="text/javascript">
+    // $(document).ready(function(){
+
+    //     chart30daysorder();
+    //     var chart = new Morris.Bar({
+    //         element: 'myfirstchart',
+
+    //         lineColors: ['#819C79', "#fc8710", "#FF6541", "#A4ADD3", "#766B56"],
+
+    //         pointFillColors: ['#ffffff'],
+    //         pointStrokeColor: ['black'],
+    //         fillOpacity: 0.6,
+    //         hideHover: 'auto',
+    //         parseTime: false,
+    //         xkey: 'perior',
+    //         ykeys: ['order', 'sales', 'profit', 'quantity'],
+    //         behaveLikeline: true,
+    //         labels: ['đơn hàng', 'doanh số', 'lợi nhuận', 'số lượng']
+    //     });
+
+    //     function chart30daysorder(){
+
+    //     }
+
+    //     $('#btn-dashboard-filter').click(function() {
+    //         alert('Da nhan');
+    //         var _token = $('input[name="_token').val();
+
+    //         var from_date = $('#datepicker').val();
+    //         var to_date = $('#datepicker2').val();
+
+    //         // alert(from_date);
+    //         // alert(to_date);
+    //         $.ajax({
+    //             url:"{{url('admin/index')}}",
+    //             method:"POST",
+    //             dataType:"JSON",
+    //             data:{from_date: from_date, to_date: to_date, _token: _token},
+
+    //             success:function(data)
+    //             {
+    //                 chart.setData(data);
+    //             }
+    //         });
+    //     });
+    // });
+</script>
+
+
 </body>
 
 </html>

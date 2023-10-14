@@ -54,6 +54,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
     Route::group(['prefix' => 'admin', 'middleware' => 'CheckLogedOut'], function () {
         // 2. Index - http://127.0.0.1:8000/admin/index
         Route::get('index', 'HomeController@getHome');
+        Route::get('index/filter', 'HomeController@filterData');
 
 
         // 3. Danh sach NQT - http://127.0.0.1:8000/admin/quantrivien

@@ -6,7 +6,7 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div id="" class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;">DANH SÁCH SẢN PHẨM</h6>
+            <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;"></h6>
             <form id="signupForm" method="post" enctype="multipart/form-data" class="form-horizontal" action="">
                 <input type="text" name="total_product_quantities" id="total_product_quantities" placeholder="Số lượng muốn thêm" style="margin-right: 10px;">
                 <input name="submit" type="submit" class="btn btn-primary" value="Thêm"></input>
@@ -37,7 +37,11 @@
         </div>
 
         <div id="" class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;"></h6>
+            @if(empty($keyword))
+            <p class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;">DANH SÁCH SẢN PHẨM</p>
+            @else
+            <p class="mb-0" style="font-size: 24px;margin: auto; color: #EB1616;">{{$keyword}}</p>
+            @endif
             <form class="d-none d-md-flex ms-4" action="{{asset('admin/nhap-xuat/search/')}}" role="search" method="get">
                 <input class="form-control bg-dark border-0" name="result" type="text" placeholder="Tìm kiếm">
             </form>
