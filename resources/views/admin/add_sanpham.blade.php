@@ -101,7 +101,7 @@
                             </div>
                         </div>
                         <!--  -->
-                        <div class="form-group row" style=" text-align: left !important;">
+                        <!-- <div class="form-group row" style=" text-align: left !important;">
                             <div class="col-sm-6">
                                 <label for="">Nhập số lượng sản phẩm<span style="color: red;">*</span></label>
                             </div>
@@ -110,7 +110,7 @@
                             <div class="col-sm-6">
                                 <input name="quantity" type="quantity" class="form-control" placeholder="Số lượng sản phẩm">
                             </div>
-                        </div>
+                        </div> -->
                         <!--  -->
                         <div class="form-group row" style=" text-align: left !important;">
                             <div class="col-sm-6">

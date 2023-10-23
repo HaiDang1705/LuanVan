@@ -182,6 +182,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         
+        
 
         /*
          * Package Service Providers...
@@ -216,6 +217,7 @@ return [
         // 'Cart' => Hardevine\Shoppingcart\Facades\Cart::class,
         'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        
     ])->toArray(),
 
 ];

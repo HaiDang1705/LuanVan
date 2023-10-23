@@ -190,6 +190,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::get('/', 'ProductController@getProduct');
             // Route::post('/', 'ProductController@postProduct');
 
+            
+
+
             //Thêm sản phẩm - http://127.0.0.1:8000/admin/sanpham/add
             Route::get('add', 'ProductController@getAddProduct');
             Route::post('add', 'ProductController@postAddProduct');
@@ -240,8 +243,24 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
 
         Route::group(['prefix' => 'nhap-xuat'], function () {
             Route::get('/', 'ImportController@getImport');
+            Route::post('/', 'ImportController@postImport');
+
+            // Hiển thị các sản phẩm đã xử lý hoặc chưa xử lý dựa vào quantityFilter
+            Route::get('/{quantityFilter}', 'ImportController@getProductsByQuantity');
+            Route::post('/{quantityFilter}', 'ImportController@postImport');
             // Tim kiem
             Route::get('search', 'ImportController@getSearch');
+            Route::post('search', 'ImportController@postImport');
+        });
+
+        Route::group(['prefix' => 'nhap'], function () {
+            Route::get('/', 'ImportController@getNhapKho');
+            // add đơn nhập hàng
+            Route::get('add', 'ImportController@getAddDonNhapHang');
+            Route::post('add', 'ImportController@postAddDonNhapHang');
+
+            Route::get('chitiet/{id}', 'ImportController@getChiTietNhapKho');
+            // Route::post('/', 'ImportController@postImport');
         });
     });
 });
@@ -289,7 +308,11 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
             Route::get('show/{id?}', 'CartController@getShowCart')->name('cart.show');
             Route::get('delete/{id}', 'CartController@getDeleteCart');
             Route::get('update', 'CartController@getUpdateCart');
+
             // Route::post('show', 'CartController@postComplete');
+
+            Route::post('payment', 'CartController@getPay');
+
             Route::post('show', 'CartController@postShipping');
             Route::post('checkout', 'CartController@postShipping')->name('user.cart.checkout');
         });

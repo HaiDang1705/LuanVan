@@ -13,14 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lv_product_totalquantites', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('lv_nhapkho_details', function (Blueprint $table) {
+            $table->increments('id'); // Sử dụng id làm trường khoá tự tăng
+            $table->integer('nhapkho_id')->unsigned();
+            $table->foreign('nhapkho_id')
+                ->references('nhapkho_id')
+                ->on('lv_nhapkho')
+                ->onDelete('cascade');
             $table->integer('product_id')->unsigned();
             $table->foreign('product_id')
                 ->references('product_id')
                 ->on('lv_product')
                 ->onDelete('cascade');
-            $table->integer('total_quantity');
+            $table->integer('quantity');
+            $table->string('image');
+            $table->integer('price');
             $table->timestamps();
         });
     }
@@ -32,6 +39,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lv_product_totalquantites');
+        Schema::dropIfExists('lv_nhapkho_details');
     }
 };

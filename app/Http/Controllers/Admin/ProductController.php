@@ -66,7 +66,7 @@ class ProductController extends Controller
 
         $productquantity = new ProductQuantity();
         $productquantity->product_id = $product_id;
-        $productquantity->product_quantity = $request->quantity;
+        $productquantity->product_quantity = 0;
         $productquantity->save();
 
         $request->image->storeAs('public/storage/avatar', $filename);
@@ -117,15 +117,16 @@ class ProductController extends Controller
         $product->save();
 
         // Cập nhật số lượng sản phẩm trong bảng lv_product_quantities
-        if ($productQuantity) {
-            $productQuantity->product_quantity = $request->quantity;
-            $productQuantity->save();
-        } else {
-            $newProductQuantity = new ProductQuantity();
-            $newProductQuantity->product_id = $id;
-            $newProductQuantity->product_quantity = $request->quantity;
-            $newProductQuantity->save();
-        }
+        
+        // if ($productQuantity) {
+        //     $productQuantity->product_quantity = $request->quantity;
+        //     $productQuantity->save();
+        // } else {
+        //     $newProductQuantity = new ProductQuantity();
+        //     $newProductQuantity->product_id = $id;
+        //     $newProductQuantity->product_quantity = $request->quantity;
+        //     $newProductQuantity->save();
+        // }
 
         // Lưu thông báo thành công vào Session
         Session::flash('success', 'Cập nhật sản phẩm thành công');
@@ -172,4 +173,7 @@ class ProductController extends Controller
 
         return $totalView;
     }
+
+    
+
 }

@@ -217,8 +217,11 @@
                                         </div>
                                         <div class="form-group text-right" style="text-align: left;">
                                             <div class="row">
-                                                <div class="col-6" style="text-align: left;">
+                                                <div class="col-4" style="text-align: left;">
                                                     <input type="submit" class="btn btn-danger w-20" value="Đặt hàng"></input>
+                                                </div>
+                                                <div class="col-8" style="text-align: left;">
+
                                                 </div>
                                             </div>
                                         </div>
@@ -227,6 +230,18 @@
                             </div>
                         </div>
                         {{csrf_field()}}
+                </form>
+
+                <form action="{{asset('user/cart/payment')}}" method="post">
+                    <div class="row">
+                        <div class="col col-md-8"></div>
+                        <div class="col col-md-4">
+                            <form action="{{asset('user/cart/payment')}}" method="post">
+                                <button type="submit" name="redirect" style="height: 37px;margin-left: 790px;" class="btn btn-danger w-20">Thanh toán online</button>
+                                {{csrf_field()}}
+                            </form>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div style="text-align: center;" class="row-md-8">
@@ -437,8 +452,11 @@
                                         </div>
                                         <div class="form-group text-right" style="text-align: left;">
                                             <div class="row">
-                                                <div class="col-6" style="text-align: left;">
+                                                <div class="col-4" style="text-align: left;">
                                                     <input type="submit" class="btn btn-danger w-20" value="Đặt hàng"></input>
+                                                </div>
+                                                <div class="col-8" style="text-align: left;">
+
                                                 </div>
                                             </div>
                                         </div>
@@ -447,6 +465,10 @@
                             </div>
                         </div>
                         {{csrf_field()}}
+                </form>
+                <form action="{{asset('user/cart/payment')}}" method="post">
+                    <button type="submit" name="redirect" style="height: 37px;margin-left: 790px;" class="btn btn-danger w-20">Thanh toán online</button>
+                    {{csrf_field()}}
                 </form>
             </div>
             <div style="text-align: center;" class="row-md-8">
