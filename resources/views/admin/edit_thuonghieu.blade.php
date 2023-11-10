@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Sửa thương hiệu sản phẩm')
+@section('title', 'Sửa NHÀ CUNG CẤP sản phẩm')
 @section('main')
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
@@ -7,23 +7,41 @@
         <div class="col-5">
             <div class="bg-secondary text-center rounded p-4">
                 <div class="align-items-center justify-content-between mb-4">
-                    <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">THƯƠNG HIỆU SẢN PHẨM</h6>
+                    <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">NHÀ CUNG CẤP SẢN PHẨM</h6>
                 </div>
                 <div class="table-responsive">
                     <table class="table text-start align-middle table-hover mb-0">
                         <thead>
                             <tr class="text-white" style="text-align: left;">
-                                <th scope="col">SỬA THƯƠNG HIỆU</th>
+                                <th scope="col">SỬA NHÀ CUNG CẤP</th>
                             </tr>
                         </thead>
                         <tbody>
                             @include('errors.note')
                             <form action="" method="post">
                                 <tr class="text-white" style="text-align: left;">
-                                    <td>Tên thương hiệu:</td>
+                                    <td>Tên NHÀ CUNG CẤP:</td>
                                 </tr>
                                 <tr class="text-white">
-                                    <td><input style="background-color: white;" type="text" name="name" class="form-control" placeholder="Tên thương hiệu..." value="{{$brand->brand_name}}"></td>
+                                    <td><input style="background-color: white;" type="text" name="name" class="form-control" placeholder="Tên NHÀ CUNG CẤP..." value="{{$brand->brand_name}}"></td>
+                                </tr>
+                                <tr class="text-white" style="text-align: left;">
+                                    <td>Email nhà cung cấp:</td>
+                                </tr>
+                                <tr class="text-white">
+                                    <td><input style="background-color: white;" type="text" name="email" class="form-control" placeholder="Email nhà cung cấp..." value="{{$brand->brand_email}}"></td>
+                                </tr>
+                                <tr class="text-white" style="text-align: left;">
+                                    <td>Số điện thoại nhà cung cấp:</td>
+                                </tr>
+                                <tr class="text-white">
+                                    <td><input style="background-color: white;" type="text" name="phone" class="form-control" placeholder="SĐT nhà cung cấp..." value="{{$brand->brand_phone}}"></td>
+                                </tr>
+                                <tr class="text-white" style="text-align: left;">
+                                    <td>Email nhà cung cấp:</td>
+                                </tr>
+                                <tr class="text-white">
+                                    <td><input style="background-color: white;" type="text" name="address" class="form-control" placeholder="Địa chỉ nhà cung cấp..." value="{{$brand->brand_address}}"></td>
                                 </tr>
                                 <tr class="text-white" style="text-align: left;">
                                     <td>Hiển thị:</td>

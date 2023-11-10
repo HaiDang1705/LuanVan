@@ -11,4 +11,9 @@ class Product extends Model
     protected $table = 'lv_product';
     protected $primaryKey = 'product_id';
     protected $guarded = [];
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class, 'product_brand', 'brand_id');
+    }
 }

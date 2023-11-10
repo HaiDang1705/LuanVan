@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Models\Order;
 use App\Models\Models\OrderCart;
 use App\Models\Models\OrderDetail;
+use App\Models\Models\Payment;
 use App\Models\Models\ProductQuantity;
 use App\Models\Models\Shipping_States;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,8 @@ class OrderController extends Controller
             ->get();
 
         $data['shippingstates'] = Shipping_States::all();
+
+        $data['payment'] = Payment::all();
 
         return view('admin.quanly_donhang', $data);
     }
@@ -80,6 +83,7 @@ class OrderController extends Controller
 
         $data['orderlist'] = $data['orderlist']->get();
         $data['shippingstates'] = Shipping_States::all();
+        $data['payment'] = Payment::all();
 
         return view('admin.quanly_donhang_states', $data);
     }

@@ -164,6 +164,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-6">
+                                        <h5 style="text-align: left;">Lợi nhuận:</h5>
+                                    </div>
+                                    <div class="col-6">
+                                        <input name="product_profit" style="font-weight: bold;" value="{{$totalProfitOneOrder}}"></input>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-12">
                                         <h3>Xác nhận mua hàng</h3>
                                         <!-- <form method="post"> -->
@@ -205,7 +213,7 @@
                                             <div class="row">
                                                 <div class="col-12" style="text-align: left;">
                                                     <label style="font-weight: 700;" for="add">Trạng thái thanh toán</label>
-                                                    <select required name="status" id="">
+                                                    <select required name="status" id="status_thanhtoan">
                                                         <!--  -->
                                                         @foreach($liststatus as $status)
                                                         <option value="{{$status->status_id}}">{{$status->status_name}}</option>
@@ -218,7 +226,7 @@
                                         <div class="form-group text-right" style="text-align: left;">
                                             <div class="row">
                                                 <div class="col-4" style="text-align: left;">
-                                                    <input type="submit" class="btn btn-danger w-20" value="Đặt hàng"></input>
+                                                    <input type="submit" name="redirect" class="btn btn-danger w-20" value="Đặt hàng"></input>
                                                 </div>
                                                 <div class="col-8" style="text-align: left;">
 
@@ -231,18 +239,12 @@
                         </div>
                         {{csrf_field()}}
                 </form>
-
-                <form action="{{asset('user/cart/payment')}}" method="post">
-                    <div class="row">
-                        <div class="col col-md-8"></div>
-                        <div class="col col-md-4">
-                            <form action="{{asset('user/cart/payment')}}" method="post">
-                                <button type="submit" name="redirect" style="height: 37px;margin-left: 790px;" class="btn btn-danger w-20">Thanh toán online</button>
-                                {{csrf_field()}}
-                            </form>
-                        </div>
-                    </div>
-                </form>
+                <!-- Khi khách hàng đã đăng nhập -->
+                <!-- <form action="{{asset('user/cart/payment')}}" method="post">
+                    <input style="display: none;" type="hidden" name="total" value="{{$total}}">
+                    <button type="submit" name="redirect" style="height: 37px;margin-left: 790px;" class="btn btn-danger w-20">Thanh toán online</button>
+                    {{csrf_field()}}
+                </form> -->
             </div>
             <div style="text-align: center;" class="row-md-8">
                 <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Quay
@@ -403,6 +405,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-6">
+                                        <h5 style="text-align: left;">Lợi nhuận:</h5>
+                                    </div>
+                                    <div class="col-6">
+                                        <input name="product_profit" style="font-weight: bold;" value="{{$totalProfitOneOrder}}"></input>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-12">
                                         <h3>Xác nhận mua hàng</h3>
                                         <!-- <form method="post"> -->
@@ -440,7 +450,7 @@
                                             <div class="row">
                                                 <div class="col-12" style="text-align: left;">
                                                     <label style="font-weight: 700;" for="add">Trạng thái thanh toán</label>
-                                                    <select required name="status" id="">
+                                                    <select required name="status" id="status_thanhtoan">
                                                         <!--  -->
                                                         @foreach($liststatus as $status)
                                                         <option value="{{$status->status_id}}">{{$status->status_name}}</option>
@@ -453,11 +463,11 @@
                                         <div class="form-group text-right" style="text-align: left;">
                                             <div class="row">
                                                 <div class="col-4" style="text-align: left;">
-                                                    <input type="submit" class="btn btn-danger w-20" value="Đặt hàng"></input>
+                                                    <input type="submit" name="redirect" class="btn btn-danger w-20" value="Đặt hàng"></input>
                                                 </div>
-                                                <div class="col-8" style="text-align: left;">
-
-                                                </div>
+                                                <!-- <div class="col-8" style="text-align: right;">
+                                                    <button type="submit" name="payment" value='Online' class="btn btn-danger w-20">Thanh toán Online</button>
+                                                </div> -->
                                             </div>
                                         </div>
                                     </div>
@@ -466,10 +476,11 @@
                         </div>
                         {{csrf_field()}}
                 </form>
-                <form action="{{asset('user/cart/payment')}}" method="post">
+                <!-- <form action="{{asset('user/cart/payment')}}" method="post">
+                    <input style="display: none;" type="hidden" name="total" value="{{$total}}">    
                     <button type="submit" name="redirect" style="height: 37px;margin-left: 790px;" class="btn btn-danger w-20">Thanh toán online</button>
                     {{csrf_field()}}
-                </form>
+                </form> -->
             </div>
             <div style="text-align: center;" class="row-md-8">
                 <a href="{{asset('user/index')}}" class="btn btn-warning btn-md"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Quay
@@ -520,6 +531,8 @@
         });
     }
 </script>
+
+
 
 </html>
 @stop

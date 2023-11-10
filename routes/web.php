@@ -190,7 +190,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::get('/', 'ProductController@getProduct');
             // Route::post('/', 'ProductController@postProduct');
 
-            
+
 
 
             //Thêm sản phẩm - http://127.0.0.1:8000/admin/sanpham/add
@@ -260,6 +260,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::post('add', 'ImportController@postAddDonNhapHang');
 
             Route::get('chitiet/{id}', 'ImportController@getChiTietNhapKho');
+            Route::get('delete/{id}', 'ImportController@getDeleteProduct');
             // Route::post('/', 'ImportController@postImport');
         });
     });
@@ -311,10 +312,15 @@ Route::group(['namespace' => 'App\Http\Controllers\User'], function () {
 
             // Route::post('show', 'CartController@postComplete');
 
-            Route::post('payment', 'CartController@getPay');
+            // Route::post('payment', 'CartController@getPay');
 
-            Route::post('show', 'CartController@postShipping');
+            // Route::get('check-payment-result', 'CartController@checkPaymentResult')->name('check-payment-result');
+
+            // Route::post('show', 'CartController@postShipping');
             Route::post('checkout', 'CartController@postShipping')->name('user.cart.checkout');
+
+            Route::post('payment/online', 'CartController@createPayment')->name('payment.online');
+            Route::get('vnpay/return', 'CartController@vnpayReturn')->name('vnpay.return');
         });
 
         // 4. Đăng ký - http://127.0.0.1:8000/user/register

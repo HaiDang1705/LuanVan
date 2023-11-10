@@ -33,18 +33,20 @@
                                     <th scope="col">ĐỊA CHỈ</th> -->
                         <th scope="col">TRẠNG THÁI ĐƠN HÀNG</th>
                         <th scope="col">THANH TOÁN</th>
+                        <th scope="col">PHƯƠNG THỨC THANH TOÁN</th>
                         <th scope="col">TÙY CHỌN</th>
                     </tr>
                 </thead>
                 @php
                 $counter = 1;
+                $foundPayment = false;
                 @endphp
                 <tbody>
                     @foreach($orderlist as $order)
                     <tr class="text-white">
                         <td>{{$counter}}</td>
                         <td>
-                            {{$order->created_at}}
+                            {{ date('d-m-Y', strtotime($order->created_at)) }}
                         </td>
                         <td>{{ number_format($order->shipping_total, 0, '.', ',') }} VNĐ</td>
                         <td>{{$order->shipping_name}}</td>
@@ -61,8 +63,29 @@
                             {{$order->status_name}}
                         </td>
                         <td>
-                            <a href="{{asset('admin/donhang/chitiet/'.$order->shipping_id)}}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
-                            <a class="btn btn-sm btn-primary" href="{{asset('admin/donhang/delete/'.$order->shipping_id)}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                            <!--  -->
+                            @foreach($payment as $paymentItem)
+                            @if($order->shipping_id == $paymentItem->p_transaction_id)
+                            @php
+                            $foundPayment = true;
+                            @endphp
+                            <ul style="text-align: left;">
+                                <li>Ngân hàng: {{ $paymentItem->p_code_bank }}</li>
+                                <li>Mã thanh toán: {{ $paymentItem->p_code_vnpay }}</li>
+                                <li>Tổng tiền: {{ number_format($paymentItem->p_money, 0, '.', ',') }} VNĐ </li>
+                                <li>Nội dung: {{ $paymentItem->p_note }}</li>
+                                <li>Thời gian: {{ date('d-m-Y H:i', strtotime($paymentItem->p_time)) }}</li>
+                            </ul>
+                            @endif
+                            @endforeach
+
+                            @if (!$foundPayment)
+                            <span style="padding: 10px 28px;background: red;border-radius: 12px;">Chưa thanh toán</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a style="margin-bottom: 8px;" href="{{asset('admin/donhang/chitiet/'.$order->shipping_id)}}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Chi tiết</a>
+                            <a style="margin-bottom: 8px;" class="btn btn-sm btn-primary" href="{{asset('admin/donhang/delete/'.$order->shipping_id)}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
                         </td>
                     </tr>
                     @php

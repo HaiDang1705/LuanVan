@@ -7,36 +7,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Models\Product;
 use App\Models\Models\Order;
+use App\Models\Models\Payment;
 use App\Models\Models\CartItem;
 use App\Models\Models\OrderDetail;
 use App\Models\Models\Shipping_Status;
 use App\Models\Models\Shipping_States;
 use App\Models\Models\CustomerInfor;
+use App\Models\Models\NhapKhoDetails;
 use App\Models\Models\ProductQuantity;
+use Carbon\Carbon;
+use Exception;
 use \Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 // use \Hardevine\Shoppingcart\Facades\Cart;
 // use Cart;
 
 class CartController extends Controller
 {
-    // public function getAddCart($id)
-    // {
-    //     $product = Product::find($id);
-    //     Cart::add([
-    //         'id' => $id,
-    //         'name' => $product->product_name,
-    //         'qty' => 1,
-    //         'price' => $product->product_price,
-    //         'options' => ['img' => $product->product_image]
-    //     ]);
-    //     return redirect('user/cart/show');
-    //     // $data = Cart::content();
-    //     // dd($data);
-    // }
-
     public function getAddCart($id)
     {
         $product = Product::find($id);
@@ -90,6 +80,7 @@ class CartController extends Controller
         if (Auth::guard('customer')->check()) {
             $customer = Auth::guard('customer')->user();
             $data['total'] = 0; // Khởi tạo tổng giá trị ban đầu
+            $data['totalProfitOneOrder'] = 0; // Khởi tạo tổng lợi nhuận của một đơn hàng ban đầu
             $data['count'] = CartItem::where('id_customer', $customer->id)->sum('quantity'); // đếm quantity trong CartItem dựa trên id_customer
             // $data['products'] = CartItem::where('id_customer', $customer->id)->get();
             $data['products'] = CartItem::where('id_customer', $customer->id)->with('product')->get();
@@ -101,7 +92,19 @@ class CartController extends Controller
             // Tính tổng giá trị từ lv_cart
             foreach ($data['products'] as $product) {
                 $data['total'] += $product->price * $product->quantity;
+
+                // Lấy thông tin giá nhập từ bảng lv_nhapkho_details
+                $nhapkhoDetail = NhapKhoDetails::where('product_id', $product->id_product)
+                    ->first();
+                if ($nhapkhoDetail) {
+                    // Tính lợi nhuận của từng sản phẩm trong đơn hàng
+                    $profitPerProduct = ($product->price - $nhapkhoDetail->price) * $product->quantity;
+
+                    // Cộng vào tổng lợi nhuận của đơn hàng
+                    $data['totalProfitOneOrder'] += $profitPerProduct;
+                }
             }
+            // dd($data['totalProfitOneOrder']);    
 
             // Truy vấn địa chỉ và số điện thoại từ bảng lv_customers_infor nếu có id được truyền
             if ($id) {
@@ -130,6 +133,20 @@ class CartController extends Controller
             $data['customer'] = null;
             $data['address'] = null;
             $data['phone'] = null;
+            $data['totalProfitOneOrder'] = 0; // Khởi tạo tổng lợi nhuận của một đơn hàng ban đầu
+            // Tính tổng lợi nhuận từ Cart
+            foreach ($data['products'] as $product) {
+                // Lấy thông tin giá nhập từ bảng lv_nhapkho_details
+                $nhapkhoDetail = NhapKhoDetails::where('product_id', $product->id)
+                    ->first();
+                if ($nhapkhoDetail) {
+                    // Tính lợi nhuận của từng sản phẩm trong đơn hàng
+                    $profitPerProduct = ($product->price - $nhapkhoDetail->price) * $product->qty;
+
+                    // Cộng vào tổng lợi nhuận của đơn hàng
+                    $data['totalProfitOneOrder'] += $profitPerProduct;
+                }
+            }
         }
         return view('user.cart', $data);
     }
@@ -163,115 +180,264 @@ class CartController extends Controller
     // Gửi đơn hàng
     public function postShipping(Request $request)
     {
-        $order = new Order;
-        $order->shipping_name = $request->name;
-        $order->shipping_email = $request->email;
-        $order->shipping_phone = $request->phone;
-        $order->shipping_address = $request->address;
-        $order->shipping_description = $request->description;
-        $order->shipping_status = $request->status;
-        $order->shipping_states = $request->states;
-        $order->shipping_slug = $request->product_slug;
-        $order->shipping_total = $request->product_total;
+        // dd($request->all());
+        // Kiểm tra phương thức thanh toán
+        // Nếu bạn sử dụng phương thức thanh toán trực tuyến
+        $paymentMethod = $request->input('status');
 
-        // Lưu thông tin đơn hàng trước để có shipping_id
-        $order->save();
-
-        if (Auth::guard('customer')->check()) {
-            // Người dùng đã đăng nhập, bạn có thể sử dụng thông tin của họ ở đây
-            $customer = Auth::guard('customer')->user();
-            $order->id_customer = $customer->id;
-
-            // Xử lý biến $request->product_total nếu đã đăng nhập
-            $order->shipping_total = (float) str_replace(',', '', $request->product_total);
-        } else {
-            $order->id_customer = null;
-            $order->shipping_total = (int) $request->product_total;
-        }
-
-        // Kiểm tra coi có đủ sản phẩm để bán không. Nếu đủ mới lưu order
-        // $order->save();
-
-        // Lưu chi tiết đơn hàng (sản phẩm từ giỏ hàng) vào bảng OrderDetail
-        if (Auth::guard('customer')->check()) {
-            $cartItems = CartItem::where('id_customer', $customer->id)->get();
-        } else {
-            $cartItems = Cart::content();
-        }
-
-        $hasError = false; // Biến cờ để kiểm tra lỗi
-
-        foreach ($cartItems as $cartItem) {
-            $orderDetail = new OrderDetail;
-            $orderDetail->shipping_id = $order->shipping_id;
-
-            // Xử lý dữ liệu sản phẩm nếu không đúng định dạng
-            $productData = json_decode($cartItem->options);
-
-            if ($productData && isset($productData->img)) {
-                $orderDetail->image = json_encode(["img" => $productData->img]);
-            } else {
-                $orderDetail->image = json_encode(["img" => $cartItem->image]);
-            }
-
+        // Kiểm tra nếu là Thanh toán online
+        if ($paymentMethod == 2) {
+            $order = new Order;
+            $order->shipping_name = $request->name;
+            $order->shipping_email = $request->email;
+            $order->shipping_phone = $request->phone;
+            $order->shipping_address = $request->address;
+            $order->shipping_description = $request->description;
+            $order->shipping_status = $request->status;
+            $order->shipping_states = $request->states;
+            $order->shipping_slug = $request->product_slug;
+            $order->shipping_total = $request->product_total;
+            $order->shipping_profit = $request->product_profit;
             if (Auth::guard('customer')->check()) {
-                $orderDetail->shipping_details_product_id = $cartItem->id_product;
-                $orderDetail->quantity = $cartItem->quantity;
-                $orderDetail->price = $cartItem->price;
+                // Người dùng đã đăng nhập, bạn có thể sử dụng thông tin của họ ở đây
+                $customer = Auth::guard('customer')->user();
+                $order->id_customer = $customer->id;
+
+                // Xử lý biến $request->product_total nếu đã đăng nhập
+                $order->shipping_total = (float) str_replace(',', '', $request->product_total);
+                $order->shipping_profit = (float) str_replace(',', '', $request->product_profit);
             } else {
-                $orderDetail->shipping_details_product_id = $cartItem->id;
-                $orderDetail->quantity = $cartItem->qty;
-                $orderDetail->price = $cartItem->price;
+                $order->id_customer = null;
+                $order->shipping_total = (int) $request->product_total;
+                $order->shipping_profit = (int) $request->product_profit;
             }
 
-            // Kiểm tra số lượng sản phẩm có sẵn trong kho
-            $productId = $orderDetail->shipping_details_product_id;
-            $productQuantity = ProductQuantity::where('product_id', $productId)->value('product_quantity');
-
-            if ($orderDetail->quantity > $productQuantity) {
-                // Số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho
-                Session::flash('error', 'Sản phẩm bạn đặt hiện không có đủ trong kho. Chúng tôi rất xin lỗi bạn.');
-                $hasError = true; // Đặt biến cờ để báo có lỗi
-                break; // Thoát khỏi vòng lặp
-                // return redirect()->back();
+            // Lưu chi tiết đơn hàng (sản phẩm từ giỏ hàng) vào bảng OrderDetail
+            if (Auth::guard('customer')->check()) {
+                $cartItems = CartItem::where('id_customer', $customer->id)->get();
             } else {
-                // Giảm số lượng sản phẩm trong bảng lv_product_quantities
-                ProductQuantity::where('product_id', $productId)
-                    ->decrement('product_quantity', $orderDetail->quantity);
-                // Lưu chi tiết đơn hàng vào cơ sở dữ liệu
-                $orderDetail->save();
+                $cartItems = Cart::content();
             }
-        }
-
-        if (!$hasError) {
-            // Nếu không có lỗi, lưu đơn hàng
             $order->save();
-        } else {
-            $order->destroy($order->shipping_id);
-        }
 
-        if (!$hasError) {
-            // Xóa giỏ hàng sau khi lưu đơn hàng
             if (Auth::guard('customer')->check()) {
-                CartItem::where('id_customer', $customer->id)->delete();
+                // Người dùng đã đăng nhập, bạn có thể sử dụng thông tin của họ ở đây
+                $customer = Auth::guard('customer')->user();
+                $order->id_customer = $customer->id;
+
+                // Xử lý biến $request->product_total nếu đã đăng nhập
+                $order->shipping_total = (float) str_replace(',', '', $request->product_total);
+                $order->shipping_profit = (float) str_replace(',', '', $request->product_profit);
             } else {
-                Cart::destroy();
+                $order->id_customer = null;
+                $order->shipping_total = (int) $request->product_total;
+                $order->shipping_profit = (int) $request->product_profit;
             }
 
-            return back()->with('success', 'Đơn hàng đã được đặt thành công');
-        } else {
-            // Nếu có lỗi, không lưu đơn hàng và chuyển hướng trở lại
-            return redirect()->back();
+            // Lưu chi tiết đơn hàng (sản phẩm từ giỏ hàng) vào bảng OrderDetail
+            if (Auth::guard('customer')->check()) {
+                $cartItems = CartItem::where('id_customer', $customer->id)->get();
+            } else {
+                $cartItems = Cart::content();
+            }
+
+            $hasError = false; // Biến cờ để kiểm tra lỗi
+
+            foreach ($cartItems as $cartItem) {
+                $orderDetail = new OrderDetail;
+                $orderDetail->shipping_id = $order->shipping_id;
+
+                // Xử lý dữ liệu sản phẩm nếu không đúng định dạng
+                $productData = json_decode($cartItem->options);
+
+                if ($productData && isset($productData->img)) {
+                    $orderDetail->image = json_encode(["img" => $productData->img]);
+                } else {
+                    $orderDetail->image = json_encode(["img" => $cartItem->image]);
+                }
+
+                if (Auth::guard('customer')->check()) {
+                    $orderDetail->shipping_details_product_id = $cartItem->id_product;
+                    $orderDetail->quantity = $cartItem->quantity;
+                    $orderDetail->price = $cartItem->price;
+                } else {
+                    $orderDetail->shipping_details_product_id = $cartItem->id;
+                    $orderDetail->quantity = $cartItem->qty;
+                    $orderDetail->price = $cartItem->price;
+                }
+
+                // Kiểm tra số lượng sản phẩm có sẵn trong kho
+                $productId = $orderDetail->shipping_details_product_id;
+                $productQuantity = ProductQuantity::where('product_id', $productId)->value('product_quantity');
+
+                if ($orderDetail->quantity > $productQuantity) {
+                    // Số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho
+                    Session::flash('error', 'Sản phẩm bạn đặt hiện không có đủ trong kho. Chúng tôi rất xin lỗi bạn.');
+                    $hasError = true; // Đặt biến cờ để báo có lỗi
+                    break; // Thoát khỏi vòng lặp
+                    // return redirect()->back();
+                } else {
+                    // Giảm số lượng sản phẩm trong bảng lv_product_quantities
+                    ProductQuantity::where('product_id', $productId)
+                        ->decrement('product_quantity', $orderDetail->quantity);
+                    // Lưu chi tiết đơn hàng vào cơ sở dữ liệu
+                    $orderDetail->save();
+                }
+            }
+
+            if (!$hasError) {
+                // Nếu không có lỗi, lưu đơn hàng
+                $order->save();
+            } else {
+                $order->destroy($order->shipping_id);
+            }
+
+            if (!$hasError) {
+                // Xóa giỏ hàng sau khi lưu đơn hàng
+                if (Auth::guard('customer')->check()) {
+                    CartItem::where('id_customer', $customer->id)->delete();
+                } else {
+                    Cart::destroy();
+                }
+                // Lưu thông tin vào session
+                session(['order' => $order]);
+                session(['orderDetail' => $orderDetail]);
+                session(['cartItems' => $cartItems]);
+                // dd($order);
+                // dd(session(['order' => $order]));
+
+
+                //xóa đơn hàng order sau khi đã dùng session
+                $order->destroy($order->shipping_id);
+
+                $data['donhang'] = $order->shipping_id;
+                $data['tongtien'] = $order->shipping_total;
+
+                return view('vnpay.index', $data);
+            } else {
+                // Nếu có lỗi, không lưu đơn hàng và chuyển hướng trở lại
+                return redirect()->back();
+            }
+
+            // // Lưu thông tin vào session
+            // session(['order' => $order]);
+            // session(['orderDetail' => $orderDetail]);
+            // session(['cartItems' => $cartItems]);
+
+            // $data['donhang'] = $order->shipping_id;
+            // $data['tongtien'] = $order->shipping_total;
+
+            // return view('vnpay.index', $data);
+            // // Nếu bạn sử dụng phương thức thanh toán trực tuyến, hãy chuyển hướng đến trang thanh toán
+            // $redirectUrl = $this->getPay($request);
+            // // dd($redirectUrl);
+
+            // return redirect()->to($redirectUrl); // Chuyển hướng đến trang thanh toán
         }
+        // Thanh toán khi nhận hàng
+        else {
+            $order = new Order;
+            $order->shipping_name = $request->name;
+            $order->shipping_email = $request->email;
+            $order->shipping_phone = $request->phone;
+            $order->shipping_address = $request->address;
+            $order->shipping_description = $request->description;
+            $order->shipping_status = $request->status;
+            $order->shipping_states = $request->states;
+            $order->shipping_slug = $request->product_slug;
+            $order->shipping_total = $request->product_total;
+            $order->shipping_profit = $request->product_profit;
 
-        // Xóa giỏ hàng sau khi lưu đơn hàng
-        // if (Auth::guard('customer')->check()) {
-        //     CartItem::where('id_customer', $customer->id)->delete();
-        // } else {
-        //     Cart::destroy();
-        // }
+            $order->save();
 
-        // return back()->with('success', 'Đơn hàng đã được đặt thành công');
+            if (Auth::guard('customer')->check()) {
+                // Người dùng đã đăng nhập, bạn có thể sử dụng thông tin của họ ở đây
+                $customer = Auth::guard('customer')->user();
+                $order->id_customer = $customer->id;
+
+                // Xử lý biến $request->product_total nếu đã đăng nhập
+                $order->shipping_total = (float) str_replace(',', '', $request->product_total);
+                $order->shipping_profit = (float) str_replace(',', '', $request->product_profit);
+            } else {
+                $order->id_customer = null;
+                $order->shipping_total = (int) $request->product_total;
+                $order->shipping_profit = (int) $request->product_profit;
+            }
+
+            // Lưu chi tiết đơn hàng (sản phẩm từ giỏ hàng) vào bảng OrderDetail
+            if (Auth::guard('customer')->check()) {
+                $cartItems = CartItem::where('id_customer', $customer->id)->get();
+            } else {
+                $cartItems = Cart::content();
+            }
+
+            $hasError = false; // Biến cờ để kiểm tra lỗi
+
+            foreach ($cartItems as $cartItem) {
+                $orderDetail = new OrderDetail;
+                $orderDetail->shipping_id = $order->shipping_id;
+
+                // Xử lý dữ liệu sản phẩm nếu không đúng định dạng
+                $productData = json_decode($cartItem->options);
+
+                if ($productData && isset($productData->img)) {
+                    $orderDetail->image = json_encode(["img" => $productData->img]);
+                } else {
+                    $orderDetail->image = json_encode(["img" => $cartItem->image]);
+                }
+
+                if (Auth::guard('customer')->check()) {
+                    $orderDetail->shipping_details_product_id = $cartItem->id_product;
+                    $orderDetail->quantity = $cartItem->quantity;
+                    $orderDetail->price = $cartItem->price;
+                } else {
+                    $orderDetail->shipping_details_product_id = $cartItem->id;
+                    $orderDetail->quantity = $cartItem->qty;
+                    $orderDetail->price = $cartItem->price;
+                }
+
+                // Kiểm tra số lượng sản phẩm có sẵn trong kho
+                $productId = $orderDetail->shipping_details_product_id;
+                $productQuantity = ProductQuantity::where('product_id', $productId)->value('product_quantity');
+
+                if ($orderDetail->quantity > $productQuantity) {
+                    // Số lượng sản phẩm trong giỏ hàng vượt quá số lượng có sẵn trong kho
+                    Session::flash('error', 'Sản phẩm bạn đặt hiện không có đủ trong kho. Chúng tôi rất xin lỗi bạn.');
+                    $hasError = true; // Đặt biến cờ để báo có lỗi
+                    break; // Thoát khỏi vòng lặp
+                    // return redirect()->back();
+                } else {
+                    // Giảm số lượng sản phẩm trong bảng lv_product_quantities
+                    ProductQuantity::where('product_id', $productId)
+                        ->decrement('product_quantity', $orderDetail->quantity);
+                    // Lưu chi tiết đơn hàng vào cơ sở dữ liệu
+                    $orderDetail->save();
+                }
+            }
+            // dd($cartItems);
+            // dd($order);
+            // dd($orderDetail);
+
+            if (!$hasError) {
+                // Nếu không có lỗi, lưu đơn hàng
+                $order->save();
+            } else {
+                $order->destroy($order->shipping_id);
+            }
+
+            if (!$hasError) {
+                // Xóa giỏ hàng sau khi lưu đơn hàng
+                if (Auth::guard('customer')->check()) {
+                    CartItem::where('id_customer', $customer->id)->delete();
+                } else {
+                    Cart::destroy();
+                }
+                return back()->with('success', 'Đơn hàng đã được đặt thành công');
+            } else {
+                // Nếu có lỗi, không lưu đơn hàng và chuyển hướng trở lại
+                return redirect()->back();
+            }
+        }
     }
 
     // Hàm hiển thị chi tiết đơn hàng
@@ -348,43 +514,29 @@ class CartController extends Controller
     }
 
     // Hiển thị trang thanh toán online
-    public function getPay()
+    public function getPay(Request $request)
     {
+        $data = $request->all();
+        $donhang = $request->input('donhang');
+        $tongtien = $request->input('tongtien');
+        // dd($tongtien);
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://127.0.0.1:8000/user/cart/show";
+        $vnp_Returnurl = "http://127.0.0.1:8000/user/cart/vnpay/return";
         $vnp_TmnCode = "KG8WEFBX"; //Mã website tại VNPAY 
         $vnp_HashSecret = "NPQSIUGREPWATOSLQEXQEMSDUEQHYEXB"; //Chuỗi bí mật
 
-        $vnp_TxnRef = '1234'; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+        // $vnp_TxnRef = '1234'; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
+
+        // $vnp_TxnRef = uniqid(); // Sử dụng hàm uniqid() để tạo một giá trị ngẫu nhiên
+        $vnp_TxnRef = $donhang; // Sử dụng hàm uniqid() để tạo một giá trị ngẫu nhiên
         $vnp_OrderInfo = 'Thanh toán đơn hàng test';
-        $vnp_OrderType = 'billpayment';
-        $vnp_Amount = 20000 * 100;
+        $vnp_OrderType = 'Truc Tien Store';
+        // $vnp_Amount = $data['product_total'] * 100;
+        $vnp_Amount = $tongtien * 100;
         $vnp_Locale = 'vn';
         $vnp_BankCode = 'NCB';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
-        //Add Params of 2.0.1 Version
-        // $vnp_ExpireDate = $_POST['txtexpire'];
-        //Billing
-        // $vnp_Bill_Mobile = $_POST['txt_billing_mobile'];
-        // $vnp_Bill_Email = $_POST['txt_billing_email'];
-        // $fullName = trim($_POST['txt_billing_fullname']);
-        // if (isset($fullName) && trim($fullName) != '') {
-        //     $name = explode(' ', $fullName);
-        //     $vnp_Bill_FirstName = array_shift($name);
-        //     $vnp_Bill_LastName = array_pop($name);
-        // }
-        // $vnp_Bill_Address = $_POST['txt_inv_addr1'];
-        // $vnp_Bill_City = $_POST['txt_bill_city'];
-        // $vnp_Bill_Country = $_POST['txt_bill_country'];
-        // $vnp_Bill_State = $_POST['txt_bill_state'];
-        // // Invoice
-        // $vnp_Inv_Phone = $_POST['txt_inv_mobile'];
-        // $vnp_Inv_Email = $_POST['txt_inv_email'];
-        // $vnp_Inv_Customer = $_POST['txt_inv_customer'];
-        // $vnp_Inv_Address = $_POST['txt_inv_addr1'];
-        // $vnp_Inv_Company = $_POST['txt_inv_company'];
-        // $vnp_Inv_Taxcode = $_POST['txt_inv_taxcode'];
-        // $vnp_Inv_Type = $_POST['cbo_inv_type'];
+
         $inputData = array(
             "vnp_Version" => "2.1.0",
             "vnp_TmnCode" => $vnp_TmnCode,
@@ -398,21 +550,7 @@ class CartController extends Controller
             "vnp_OrderType" => $vnp_OrderType,
             "vnp_ReturnUrl" => $vnp_Returnurl,
             "vnp_TxnRef" => $vnp_TxnRef,
-            // "vnp_ExpireDate" => $vnp_ExpireDate,
-            // "vnp_Bill_Mobile" => $vnp_Bill_Mobile,
-            // "vnp_Bill_Email" => $vnp_Bill_Email,
-            // "vnp_Bill_FirstName" => $vnp_Bill_FirstName,
-            // "vnp_Bill_LastName" => $vnp_Bill_LastName,
-            // "vnp_Bill_Address" => $vnp_Bill_Address,
-            // "vnp_Bill_City" => $vnp_Bill_City,
-            // "vnp_Bill_Country" => $vnp_Bill_Country,
-            // "vnp_Inv_Phone" => $vnp_Inv_Phone,
-            // "vnp_Inv_Email" => $vnp_Inv_Email,
-            // "vnp_Inv_Customer" => $vnp_Inv_Customer,
-            // "vnp_Inv_Address" => $vnp_Inv_Address,
-            // "vnp_Inv_Company" => $vnp_Inv_Company,
-            // "vnp_Inv_Taxcode" => $vnp_Inv_Taxcode,
-            // "vnp_Inv_Type" => $vnp_Inv_Type
+
         );
 
         if (isset($vnp_BankCode) && $vnp_BankCode != "") {
@@ -442,17 +580,154 @@ class CartController extends Controller
             $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret); //  
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
-        $returnData = array(
-            'code' => '00', 'message' => 'success', 'data' => $vnp_Url
-        );
-        if (isset($_POST['redirect'])) {
-            header('Location: ' . $vnp_Url);
-            die();
-        } else {
-            echo json_encode($returnData);
-        }
-        // vui lòng tham khảo thêm tại code demo
 
-        // return view('user.payment');
+        // $returnData = array(
+        //     'code' => '00', 'message' => 'success', 'data' => $vnp_Url
+        // );
+
+        // // dd($data);
+        // if (isset($_POST['redirect'])) {
+        //     header('Location: ' . $vnp_Url);
+        //     die();
+        // } else {
+        // echo json_encode($returnData);
+        return $vnp_Url; // Trả về URL để chuyển hướng
+        // }
+    }
+
+    public function createPayment(Request $request)
+    {
+
+        // dd($request->all());
+        session(['order_desc' => $request->order_desc]);
+        // dd($request->order_desc);
+        // // Nếu bạn sử dụng phương thức thanh toán trực tuyến, hãy chuyển hướng đến trang thanh toán
+        $redirectUrl = $this->getPay($request);
+        // dd($redirectUrl);
+
+        return redirect()->to($redirectUrl); // Chuyển hướng đến trang thanh toán
+    }
+
+    public function vnpayReturn(Request $request)
+    {
+        // Lấy thông tin đơn hàng và chi tiết đơn hàng từ session
+        $order = session('order');
+        $order_desc = session('order_desc');
+        $orderDetail = session('orderDetail');
+        $cartItems = session('cartItems');
+
+        // ---------------------------------------------------
+        $order1 = $order;
+        $orderDetail1 = $orderDetail;
+        // ---------------------------------------------------
+        $vnpayData = $request->all();
+        // dd($order1);
+        // dd($orderDetail1);
+        // dd($vnpayData);
+        // dd($cartItems);
+        // dd($orderDetails);
+        if ($request->vnp_ResponseCode == '00') {
+            // Lưu thông tin thanh toán
+            $payment = new Payment;
+            $payment->p_transaction_id = $request->input('vnp_TxnRef');
+            // Kiểm tra nếu 'id_customer' tồn tại trong $order thì gán nó cho 'p_user_id', ngược lại gán null
+            $payment->p_user_id = $order->id_customer ?? null;
+            $payment->p_note = $order_desc;
+            $payment->p_money = $order->shipping_total;
+            $payment->p_vnp_response_code = $request->input('vnp_ResponseCode');
+            $payment->p_code_vnpay = $request->input('vnp_TransactionNo');
+            $payment->p_code_bank = $request->input('vnp_BankCode');
+            $payment->p_time = now(); // Thời gian chuyển khoản, bạn có thể thay đổi thời gian tùy theo dữ liệu bạn có
+            $payment->save(); // Lưu thông tin thanh toán
+
+            $newPaymentId = $payment->p_transaction_id - 1;
+            $payment->p_transaction_id = $newPaymentId;
+            $payment->save(); // Lưu thông tin thanh toán
+
+            // Lưu lại thông tin order và orDetails dựa vào session 
+            // $order = session('order') và $orderDetail = session('orderDetail')
+            // Tạo một đối tượng Shipping
+            $shipping = new Order;
+            $shipping->shipping_name = $order1->shipping_name;
+            $shipping->shipping_email = $order1->shipping_email;
+            $shipping->shipping_phone = $order1->shipping_phone;
+            $shipping->shipping_address = $order1->shipping_address;
+            $shipping->shipping_slug = $order1->shipping_slug;
+            $shipping->shipping_total = $order1->shipping_total;
+            $shipping->shipping_profit = $order1->shipping_profit;
+            $shipping->shipping_status = $order1->shipping_status;
+            $shipping->shipping_states = $order1->shipping_states;
+            $shipping->id_customer = $order1->id_customer;
+            // Lưu đối tượng Shipping vào cơ sở dữ liệu
+            $shipping->save();
+            // dd($shipping);
+
+            // $newShippingId = $shipping->shipping_id - 1;
+            // $shipping->shipping_id = $newShippingId;
+
+            $shipping->shipping_id = $payment->p_transaction_id;
+            // dd($shipping);
+            $shipping->save();
+
+            // Lấy shipping_id sau khi đã lưu vào cơ sở dữ liệu
+            // Gán shipping_id của đơn hàng cho đối tượng Shipping
+            // $shipping->shipping_id = $order1->shipping_id;
+            // Lưu lại đối tượng Shipping sau khi cập nhật shipping_id
+            // $shipping->save();
+            // dd($shipping);
+            // dd($cartItems);
+
+            foreach ($cartItems as $cartItem) {
+                $orderDetail = new OrderDetail;
+                $orderDetail->shipping_id = $shipping->shipping_id;
+
+                // Xử lý dữ liệu sản phẩm nếu không đúng định dạng
+                $productData = json_decode($cartItem->options);
+
+                if ($productData && isset($productData->img)) {
+                    $orderDetail->image = json_encode(["img" => $productData->img]);
+                } else {
+                    $orderDetail->image = json_encode(["img" => $cartItem->image]);
+                }
+
+                if (Auth::guard('customer')->check()) {
+                    $orderDetail->shipping_details_product_id = $cartItem->id_product;
+                    $orderDetail->quantity = $cartItem->quantity;
+                    $orderDetail->price = $cartItem->price;
+                } else {
+                    $orderDetail->shipping_details_product_id = $cartItem->id;
+                    $orderDetail->quantity = $cartItem->qty;
+                    $orderDetail->price = $cartItem->price;
+                }
+
+                // Kiểm tra số lượng sản phẩm có sẵn trong kho
+                $productId = $orderDetail->shipping_details_product_id;
+                $productQuantity = ProductQuantity::where('product_id', $productId)->value('product_quantity');
+
+                if ($orderDetail->quantity > $productQuantity) {
+                    // Xử lý khi có lỗi, ví dụ: thông báo lỗi và/hoặc redirect
+                    // Session::flash('error', 'Sản phẩm bạn đặt hiện không có đủ trong kho. Chúng tôi rất xin lỗi bạn.');
+                    // return redirect()->back();
+                } else {
+                    // Giảm số lượng sản phẩm trong bảng lv_product_quantities
+                    ProductQuantity::where('product_id', $productId)
+                        ->decrement('product_quantity', $orderDetail->quantity);
+                    // Lưu chi tiết đơn hàng vào cơ sở dữ liệu
+                    $orderDetail->save();
+                }
+            }
+
+            Session::flash('success', 'Bạn đã đặt hàng và thanh toán thành công');
+            // dd($orderDetail);
+            // dd($payment);
+            // dd($shipping);
+
+            return view('vnpay.vnpay_return', compact('vnpayData'));
+            // return redirect()->route('cart.show')->with('success', 'Bạn đã đặt hàng và thanh toán thành công');
+        } else {
+            // Session::flash('error', 'Đã xảy ra lỗi không thể thanh toán đơn hàng');
+            Order::where('shipping_id', $order->shipping_id)->delete();
+            return redirect()->route('cart.show')->with('error', 'Đã xảy ra lỗi không thể thanh toán đơn hàng');
+        }
     }
 }

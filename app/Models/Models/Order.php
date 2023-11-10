@@ -15,4 +15,9 @@ class Order extends Model
     // protected $casts = [
     //     'shipping_total' => 'float',
     // ];
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'id', 'p_transaction_id');
+    }
 }

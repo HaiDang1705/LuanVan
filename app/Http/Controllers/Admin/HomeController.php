@@ -67,9 +67,14 @@ class HomeController extends Controller
             ->sum('shipping_total');
         $data['totalDoanhThu'] = number_format($totalDoanhThu, 0, ',', '.');
 
+        // --------------------------------------------------------------------------
         // Tính tổng lợi nhuận (60% của tổng doanh thu)
-        $totalLoiNhuan = $totalDoanhThu * 0.6;
+        // $totalLoiNhuan = $totalDoanhThu * 0.6;
+        $totalLoiNhuan = DB::table('lv_shipping')
+            ->where('shipping_states', 2)
+            ->sum('shipping_profit');
         $data['totalLoiNhuan'] = number_format($totalLoiNhuan, 0, ',', '.');
+        // --------------------------------------------------------------------------
 
         // Tính tổng số lượng sản phẩm đã bán
         $totalSoldProducts = (new OrderController)->countSoldProducts();
@@ -100,7 +105,7 @@ class HomeController extends Controller
 
         // Lấy dữ liệu từ bảng lv_shipping
         $shippingData = DB::table('lv_shipping')
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(shipping_total) as total_sales'))
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(shipping_total) as total_sales'), DB::raw('SUM(shipping_profit) as profit_sales'))
             ->where('shipping_states', 2)
             ->groupBy('date')
             ->get();
@@ -110,7 +115,7 @@ class HomeController extends Controller
         // Duyệt qua mảng dữ liệu để tính toán doanh số
         foreach ($shippingData as $shipping) {
             $totalSales = floatval($shipping->total_sales);
-            $profit = $totalSales * 0.6; // 60%
+            $profit = floatval($shipping->profit_sales); // 60%
 
             $doanhSoData[] = [
                 'created_at' => $shipping->date,

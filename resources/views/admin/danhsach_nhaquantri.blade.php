@@ -16,6 +16,8 @@
                         <th scope="col">STT</th>
                         <th scope="col">TÊN NGƯỜI QUẢN TRỊ</th>
                         <th scope="col">TÊN TÀI KHOẢN</th>
+                        <th scope="col">QUYỀN</th>
+                        <th scope="col">THAO TÁC</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,6 +27,8 @@
                         <td>{{$user->id}}</td>
                         <td>{{$user->name}}</td>
                         <td>{{$user->email}}</td>
+                        <td></td>
+                        <td></td>
                         <!-- <td>
                             <a class="btn btn-sm btn-primary" href="">Xóa</a>
                             <a class="btn btn-sm btn-primary" href="{{asset('admin/listadmin/edit')}}">Edit</a>

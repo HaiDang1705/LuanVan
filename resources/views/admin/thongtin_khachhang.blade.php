@@ -17,6 +17,7 @@
                         <th scope="col">TÊN KHÁCH HÀNG</th>
                         <th scope="col">SỐ ĐIỆN THOẠI</th>
                         <th scope="col">ĐỊA CHỈ</th>
+                        <th scope="col">THAO TÁC</th>
                         <!-- <th scope="col">THAO TÁC</th> -->
                     </tr>
                 </thead>
@@ -34,10 +35,10 @@
                         <td>{{$account->name}}</td>
                         <td>{{$account->phone}}</td>
                         <td>{{$account->address}}</td>
-                        <!-- <td>
+                        <td>
                             <a class="btn btn-sm btn-primary" href="">Xóa</a>
                             <a class="btn btn-sm btn-primary" href="">Edit</a>
-                        </td> -->
+                        </td>
                     </tr>
                     @php
                     $counter++;

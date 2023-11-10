@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->string('image');
             $table->integer('price');
+            $table->integer('product_brand');
             $table->timestamps();
         });
     }

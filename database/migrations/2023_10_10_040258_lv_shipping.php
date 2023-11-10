@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('shipping_address');
             $table->integer('shipping_slug');
             $table->string('shipping_total');
+            $table->string('shipping_profit');
             // $table->integer('shipping_status');
             $table->integer('shipping_status')->unsigned();
             $table->foreign('shipping_status')

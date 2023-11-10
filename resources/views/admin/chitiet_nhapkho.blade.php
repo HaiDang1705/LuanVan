@@ -80,10 +80,11 @@
                                         <thead>
                                             <tr class="text-white">
                                                 <th scope="col">Sản phẩm</th>
+                                                <th scope="col">Nhà cung cấp</th>
                                                 <th scope="col">Hình ảnh</th>
                                                 <th scope="col">Số lượng</th>
-                                                <th scope="col">Đơn giá</th>
-                                                <th scope="col">THÀNH TIỀN</th>
+                                                <th scope="col">Giá nhập</th>
+                                                <th scope="col">Thành tiền</th>
                                             </tr>
                                         </thead>
 
@@ -98,9 +99,12 @@
                                                     {{$donnhapdetail->product->product_name}}
                                                 </td>
                                                 <td>
+                                                    {{$donnhapdetail->product->brand->brand_name}}
+                                                </td>
+                                                <td>
                                                     <div class="productInfo">
                                                         <input style="display: none;" type="text" name="image[]" placeholder="Ảnh sản phẩm" value="{{$donnhapdetail->image}}">
-                                                        <img class="product-image" width="100px" src="{{asset('storage/storage/avatar/'.$donnhapdetail->image)}}" alt="">
+                                                        <img class="product-image" width="70px" src="{{asset('storage/storage/avatar/'.$donnhapdetail->image)}}" alt="">
                                                     </div>
                                                 </td>
                                                 <td>
@@ -118,6 +122,15 @@
                                     </table>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 20px">
+                            <div class="col-4"></div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="total" style="color: red;">Tổng tiền nhập: {{ number_format($donnhap->nhapkho_total) }} VNĐ</label>
+                                </div>
+                            </div>
+                            <div class="col-4"></div>
                         </div>
                         <div class="row">
                             <div class="">

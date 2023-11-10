@@ -74,19 +74,21 @@
                                     </div>
 
                                     <div class="col-sm-6" style=" text-align: right !important;">
+                                        <a href="{{asset('admin/thuonghieu')}}" class="btn btn-sm btn-primary">Thêm Nhà Cung Cấp</a>
                                         <button onclick="addRow()" type="button" class="btn btn-sm btn-primary" id="addProductRow">Thêm Sản Phẩm</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="table-responsive" style="margin-bottom: 10px;">
+                                <div class="" style="margin-bottom: 10px;">
                                     <table class="table text-start align-middle table-bordered table-hover mb-0">
                                         <thead>
                                             <tr class="text-white">
                                                 <th scope="col">Sản phẩm</th>
+                                                <th scope="col">Nhà cung cấp</th>
                                                 <th scope="col">Hình ảnh</th>
                                                 <th scope="col">Số lượng</th>
-                                                <th scope="col">Đơn giá</th>
+                                                <th scope="col">Giá nhập</th>
                                                 <th scope="col">THÀNH TIỀN</th>
                                                 <th scope="col">THAO TÁC</th>
                                             </tr>
@@ -135,22 +137,32 @@
                                                     </select>
                                                 </td>
                                                 <td>
+                                                    <select required name="product_brand[]" class="product-select" data-product-id="">
+                                                        <option value="" selected>Chọn nhà cung cấp</option>
+                                                        @foreach($listbrand as $brand)
+                                                        <option value="{{$brand->brand_id}}">{{$brand->brand_name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td>
                                                     <div class="productInfo">
-                                                        <img class="product-image" width="100px" src="" alt="">
-                                                        <input style="display: none;" type="text" name="image[]" placeholder="Ảnh sản phẩm" value="{{$product->product_image}}">
+                                                        <img class="product-image" width="70px" src="" alt="">
+                                                        <input style="display: none;" type="text" name="image[]" placeholder="Ảnh sản phẩm">
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <input required type="number" name="quantity[]" class="product-quantity" name="" id="" value="{{$product->product_quantity}}" placeholder="Số lượng sản phẩm">
+                                                    <input required type="number" name="quantity[]" class="product-quantity" name="" id="" value="" placeholder="Số lượng sản phẩm">
                                                 </td>
-                                                <td class="product-price">
-                                                    <!-- {{number_format($product->product_price )}} VNĐ -->
+                                                <!-- <td class="product-price"></td> -->
+                                                <td>
+                                                    <input name="price_nhap[]" required type="number" class="product-price" value="">
                                                 </td>
                                                 <td>
-                                                    <input name="price[]" required type="number" class="product-total" name="product_total[]" value="{{$product->product_price * $product->product_quantity }}" readonly>
+                                                    <input name="price[]" required type="number" class="product-total" readonly>
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-primary" href="" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a>
+                                                    <button onclick="deleteRow(event)" type="button" class="btn btn-sm btn-primary" id="addProductRow">Xóa</button>
+                                                    <!-- <a class="btn btn-sm btn-primary" style="margin-bottom: 10px;" href="{{asset('admin/nhap/delete/'.$product->product_id)}}" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">Xóa</a> -->
                                                 </td>
                                             </tr>
 
@@ -166,7 +178,7 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="total" style="color: red;">Tổng tiền</label>
-                                    <input required name="total" id="total" type="number" class="form-control" placeholder="Tổng tiền">
+                                    <input required name="total" id="total" type="number" value="" class="form-control" placeholder="Tổng tiền">
                                 </div>
                             </div>
                             <div class="col-4"></div>
@@ -224,66 +236,113 @@
     });
 </script>
 
-<!-- Lấy image = name="image" -->
+
+
 <script>
-    // Lắng nghe sự kiện khi select thay đổi
-    var selects = document.querySelectorAll('select.product-select');
-    selects.forEach(function(select) {
-        select.addEventListener("change", function() {
-            updateImageInput(select);
-        });
+    function deleteRow(event) {
+        var button = event ? event.currentTarget : null;
+        if (!button) {
+            // Nếu event không được cung cấp, xử lý nó tùy theo nhu cầu (nếu cần)
+            console.error("Không cung cấp event");
+            return;
+        }
+        var row = button.closest('tr');
+
+        // Kiểm tra xem có phải là dòng cuối cùng không
+        var rowCount = document.querySelectorAll('#productTableBody tr').length;
+        if (rowCount > 1) {
+            row.remove();
+        } else {
+            // Nếu chỉ còn một dòng, hãy xóa giá trị các trường input
+            var inputs = row.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                input.value = '';
+            });
+
+            // Thêm mã để xóa giá trị src của hình ảnh
+            var productImage = row.querySelector('img.product-image');
+            productImage.src = '';
+
+            // Cập nhật giá trị của input name="image[]" cho hàng
+            var selectedOption = row.querySelector('select[name="product_name[]"]').options[0];
+            var imageInput = row.querySelector('input[name="image[]"]');
+            imageInput.value = selectedOption ? selectedOption.getAttribute("data-image") : '';
+
+            // Cập nhật giá trị của input name="product_brand[]" cho hàng
+            var brandSelect = row.querySelector('select[name="product_brand[]"]');
+            brandSelect.value = '';
+
+            // Nếu bạn muốn xóa giá trị của các trường khác, thêm mã tương ứng ở đây
+        }
+
+        event.stopPropagation();
+    }
+
+    // Gắn sự kiện "click" cho nút xóa trong mỗi hàng
+    var deleteButtons = document.querySelectorAll('.table tbody tr button.btn-primary');
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', deleteRow);
     });
 
-    // Hàm cập nhật trường input có name="image"
-    function updateImageInput(select) {
-        var row = select.closest('.template-row');
-        var selectedOption = select.options[select.selectedIndex];
-        var productInfo = row.querySelector('.productInfo');
-        var productImageInput = productInfo.querySelector('input[name="image"]');
-
-        // Lấy giá trị image từ data-image của lựa chọn
-        var selectedImage = selectedOption.getAttribute("data-image");
-
-        // Cập nhật giá trị của input[name="image"]
-        productImageInput.value = selectedImage;
-    }
-</script>
-
-<script>
     function addRow() {
         var table = document.querySelector('.table');
         var templateRow = document.querySelector('.template-row');
         var newRow = templateRow.cloneNode(true);
         newRow.id = '';
-        var select = newRow.querySelector('select.product-select');
-        var selectId = 'productSelect-' + new Date().getTime();
-        select.id = selectId;
-        var image = newRow.querySelector('img.product-image');
-        var imageId = 'productImage-' + new Date().getTime();
-        image.id = imageId;
-        image.src = '';
-        var quantityInput = newRow.querySelector('input.product-quantity');
-        var quantityInputId = 'productQuantity-' + new Date().getTime();
-        quantityInput.id = quantityInputId;
-        quantityInput.value = '';
-        var price = newRow.querySelector('td.product-price');
-        var priceId = 'productPrice-' + new Date().getTime();
-        price.id = priceId;
-        price.textContent = '';
+
+        // Cần xóa giá trị của các trường input trong dòng mới
+        var inputs = newRow.querySelectorAll('input');
+        inputs.forEach(function(input) {
+            input.value = '';
+        });
+
+        // Update select element IDs
+        var selectProduct = newRow.querySelector('select[name="product_name[]"]');
+        selectProduct.id = 'productSelect-' + new Date().getTime();
+
+        var selectBrand = newRow.querySelector('select[name="product_brand[]"]');
+        selectBrand.id = 'productBrand-' + new Date().getTime();
+
+        var totalInput = newRow.querySelector('.product-total');
+        totalInput.id = 'productTotal-' + new Date().getTime();
+
+        // Other updates (e.g., image, quantity, etc.) go here
+
         var previousRow = table.querySelector('.current-row');
         if (previousRow) {
             previousRow.classList.remove('current-row');
         }
+
+        // Thêm dòng sau để xóa giá trị src của hình ảnh
+        var productImage = newRow.querySelector('img.product-image');
+        productImage.src = '';
+
+        // Cập nhật giá trị của input name="image[]" cho hàng mới
+        var selectedOption = selectProduct.options[selectProduct.selectedIndex];
+        var imageInput = newRow.querySelector('input[name="image[]"]');
+        imageInput.value = selectedOption.getAttribute("data-image");
+
         newRow.classList.add('current-row');
         document.getElementById('productTableBody').appendChild(newRow);
         setupRow(newRow);
+
+        // Gắn sự kiện "change" cho các phần tử select trong dòng mới
+        var selects = newRow.querySelectorAll('select.product-select');
+        selects.forEach(function(select) {
+            select.addEventListener("change", function() {
+                updateImageInput(select);
+            });
+        });
     }
+
 
     function setupRow(row) {
         var select = row.querySelector('select.product-select');
         var productInfo = row.querySelector('div.productInfo');
         var productImage = row.querySelector('img.product-image');
         var productPrice = row.querySelector('td.product-price');
+        var totalInput = row.querySelector('.product-total');
+        var imageInput = row.querySelector('input[name="image[]"]'); // Thêm dòng này
 
         select.addEventListener("change", function() {
             var selectedOption = select.options[select.selectedIndex];
@@ -292,12 +351,31 @@
                 productInfo.style.display = "block";
                 productImage.src = selectedOption.getAttribute("data-image");
                 productPrice.textContent = selectedOption.getAttribute("data-price");
-                updateTotal(row);
+
+                // Cập nhật giá trị của input
+                imageInput.value = selectedOption.getAttribute("data-image");
+
+                calculateTotalForRow(row);
             } else {
                 productInfo.style.display = "none";
+                // Xóa giá trị của input nếu không có sản phẩm được chọn
+                imageInput.value = '';
             }
         });
+
+        // Lắng nghe sự kiện khi số lượng hoặc giá thay đổi
+        var quantityInput = row.querySelector('.product-quantity');
+        var priceInput = row.querySelector('.product-price');
+
+        quantityInput.addEventListener('input', function() {
+            calculateTotalForRow(row);
+        });
+
+        priceInput.addEventListener('input', function() {
+            calculateTotalForRow(row);
+        });
     }
+
 
     var rows = document.querySelectorAll('.template-row');
     rows.forEach(function(row) {
@@ -315,6 +393,40 @@
         var total = quantity * price;
         totalInput.value = total; // Giữ 2 chữ số thập phân
     }
+    // Lắng nghe sự kiện khi số lượng hoặc đơn giá thay đổi
+    var productRows = document.querySelectorAll('.template-row');
+
+    productRows.forEach(function(row) {
+        var quantityInput = row.querySelector('.product-quantity');
+        var priceInput = row.querySelector('.product-price');
+        var totalInput = row.querySelector('.product-total');
+
+        quantityInput.addEventListener('input', updateTotal);
+        priceInput.addEventListener('input', updateTotal);
+
+        // Khởi tạo tổng giá trị ban đầu
+        updateTotal();
+
+        function updateTotal() {
+            var quantity = parseFloat(quantityInput.value);
+            var price = parseFloat(priceInput.value);
+
+            var total = quantity * price;
+            totalInput.value = total; // Giữ 2 chữ số thập phân
+        }
+    });
+
+    function calculateTotalForRow(row) {
+        var quantityInput = row.querySelector('.product-quantity');
+        var priceInput = row.querySelector('.product-price');
+        var totalInput = row.querySelector('.product-total');
+
+        var quantity = parseFloat(quantityInput.value) || 0; // Số lượng
+        var price = parseFloat(priceInput.value) || 0; // Giá của sản phẩm
+
+        var total = quantity * price;
+        totalInput.value = total; // Hiển thị tổng với 2 chữ số thập phân
+    }
 </script>
 
 
@@ -326,8 +438,9 @@
 
         // Lặp qua tất cả các hàng sản phẩm
         $('.template-row').each(function() {
-            var quantity = parseFloat($(this).find('.product-quantity').val()) || 0; // Số lượng
-            var price = parseFloat($(this).find('.product-price').text().replace(/[^0-9.-]+/g, '')) || 0; // Giá của sản phẩm
+            var row = $(this);
+            var quantity = parseFloat(row.find('.product-quantity').val()) || 0; // Số lượng
+            var price = parseFloat(row.find('.product-price').val()) || 0; // Giá của sản phẩm
 
             total += quantity * price; // Tính tổng giá trị
         });
@@ -342,6 +455,7 @@
         $('.product-quantity, .product-price').on('input', calculateTotal);
     });
 </script>
+
 
 <!-- image -->
 <script>

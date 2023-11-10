@@ -14,7 +14,7 @@
                         <th scope="col">STT</th>
                         <th scope="col">TÊN KHÁCH HÀNG</th>
                         <th scope="col">TÊN TÀI KHOẢN</th>
-                        <th scope="col">DUYỆT</th>
+                        <th scope="col">TÌNH TRẠNG</th>
                         <th scope="col">THAO TÁC</th>
                     </tr>
                 </thead>
@@ -26,10 +26,12 @@
                         <td>{{$user->name}}</td>
                         <td>{{$user->email}}</td>
                         <td>
-                            Hiển thị / Ẩn
+                            Khóa / Hoạt động
                         </td>
                         <td>
                             <a class="btn btn-sm btn-primary" onclick="return confirm('Bạn có chắc chắn muốn xóa?')" href="{{asset('admin/account_khachhang/delete/'.$user->user_id)}}">Xóa</a>
+                            <a class="btn btn-sm btn-primary" href="">Khóa</a>
+                            <a class="btn btn-sm btn-primary" href="">Mở khóa</a>
                             <!-- <a class="btn btn-sm btn-primary" href="">Edit</a> -->
                         </td>
                     </tr>

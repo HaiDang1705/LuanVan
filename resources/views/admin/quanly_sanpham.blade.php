@@ -65,7 +65,7 @@
                         <th scope="col">TÊN SẢN PHẨM</th>
                         <th scope="col">MÀU</th>
                         <th scope="col">HÌNH ẢNH</th>
-                        <th scope="col">GIÁ SẢN PHẨM</th>
+                        <th scope="col">GIÁ BÁN</th>
                         <th scope="col">SỐ LƯỢNG</th>
                         <th scope="col">HIỂN THỊ</th>
                         <th scope="col">THAO TÁC</th>
@@ -83,7 +83,7 @@
                         <td>
                             <img height="100px" src="{{asset('storage/storage/avatar/'.$product->product_image)}}" alt="">
                         </td>
-                        <td>{{number_format($product->product_price,0,',','.')}} VND</td>
+                        <td>{{number_format($product->product_price,0,',',',')}}</td>
                         <td>
                             <!-- Số lượng sản phẩm: -->
                             @php

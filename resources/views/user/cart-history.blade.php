@@ -45,10 +45,17 @@
         <tfoot>
             <tr>
                 <td colspan="4" class="text-end" style="text-align: center;">Tổng giá trị:</td>
-                <td colspan="2" style="text-align: center;">{{ number_format($totalPrice, 0, '.', ',') }} VNĐ</td>
+                <td colspan="2" style="text-align: center; color: #EB1616; font-weight: bold;">{{ number_format($totalPrice, 0, '.', ',') }} VNĐ</td>
             </tr>
         </tfoot>
     </table>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6" style="text-align: center;margin: 10px;">
+            <a style="padding: 8px 20px;background: #ffc107;text-decoration: none;color: white;border-radius: 20px;" href="{{asset('user/buy-history/'.$customer->id)}}">Quay về</a>
+        </div>
+        <div class="col-3"></div>
+    </div>
 </div>
 @stop
 @section('script')
