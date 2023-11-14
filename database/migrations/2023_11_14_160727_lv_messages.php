@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lv_users', function (Blueprint $table) {
+        Schema::create('lv_messages', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('email');
-            $table->string('avatar');
-            // 
-            $table->string('name');
-            // 
-            $table->string( 'password');
-
+            $table->bigInteger('from');
+            $table->bigInteger('to');
+            $table->text('message');
+            $table->tinyInteger('is_read');
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lv_users');
+        Schema::dropIfExists('lv_messages');
     }
 };

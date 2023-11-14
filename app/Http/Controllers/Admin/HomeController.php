@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Models\Message;
 use App\Models\Models\Post;
 use App\Models\Models\Product;
 use App\Models\Models\OrderDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Pusher\Pusher;
 
 class HomeController extends Controller
 {
@@ -103,27 +106,88 @@ class HomeController extends Controller
 
         // Doanh số
 
-        // Lấy dữ liệu từ bảng lv_shipping
+        // Lấy dữ liệu từ bảng lv_shipping để làm cho biểu đồ doanh thu / lợi nhuận
         $shippingData = DB::table('lv_shipping')
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(shipping_total) as total_sales'), DB::raw('SUM(shipping_profit) as profit_sales'))
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('SUM(shipping_total) as total_sales'),
+                DB::raw('SUM(shipping_profit) as profit_sales'),
+                DB::raw('SUM(shipping_slug) as total_quantity'),
+                // DB::raw('SUM(lv_shipping_details.quantity) as total_quantity')
+            )
+            // ->leftJoin('lv_shipping_details', 'lv_shipping.shipping_id', '=', 'lv_shipping_details.shipping_id')
             ->where('shipping_states', 2)
             ->groupBy('date')
             ->get();
-
+        // dd($shippingData);
         $doanhSoData = [];
 
         // Duyệt qua mảng dữ liệu để tính toán doanh số
         foreach ($shippingData as $shipping) {
             $totalSales = floatval($shipping->total_sales);
-            $profit = floatval($shipping->profit_sales); // 60%
+            $profit = floatval($shipping->profit_sales);
+            $totalQuantity = $shipping->total_quantity;
 
             $doanhSoData[] = [
                 'created_at' => $shipping->date,
                 'doanh_so' => $totalSales,
                 'loi_nhuan' => $profit, // Add profit data
+                'tong_sanpham' => $totalQuantity,
             ];
         }
         $data['doanhSoData'] = $doanhSoData;
+        // dd($data['doanhSoData']);
+
+        // Lấy dữ liệu từ bảng lv_shipping để làm cho biểu đồ nhập kho
+        $nhapKho = DB::table('lv_nhapkho')
+            ->select(
+                DB::raw('DATE(lv_nhapkho.created_at) as date'),
+                DB::raw('SUM(lv_nhapkho.nhapkho_total) as total_nhap'),
+                DB::raw('SUM(lv_nhapkho_details.quantity) as total_quantity')
+            )
+            ->leftJoin('lv_nhapkho_details', 'lv_nhapkho.nhapkho_id', '=', 'lv_nhapkho_details.nhapkho_id')
+            ->groupBy('date')
+            ->get();
+        // dd($nhapKho);
+
+        $nhapKhoData = [];
+
+        // Duyệt qua mảng dữ liệu để tính toán doanh số
+        foreach ($nhapKho as $nhapkho) {
+            $totalNhap = floatval($nhapkho->total_nhap);
+            $quantityNhap = intval($nhapkho->total_quantity);
+
+            $nhapKhoData[] = [
+                'created_at' => $nhapkho->date,
+                'tong_nhap' => $totalNhap,
+                'tong_sanphamnhap' => $quantityNhap,
+            ];
+        }
+
+        $data['nhapKhoData'] = $nhapKhoData;
+        // dd($data['nhapKhoData']);
+
+        //------------------------------------------------ Biểu đồ hình tròn
+        // Truy xuất dữ liệu từ bảng lv_product_quantities
+        $productData = DB::table('lv_product_quantities')
+            ->join('lv_product', 'lv_product_quantities.product_id', '=', 'lv_product.product_id')
+            ->select('lv_product.product_name', 'lv_product_quantities.product_quantity')
+            ->get();
+
+        // Tính tổng số lượng sản phẩm
+        $totalQuantity = $productData->sum('product_quantity');
+
+        // Xây dựng mảng dữ liệu cho biểu đồ
+        $piedata = [['Product', 'Percentage']];
+        foreach ($productData as $product) {
+            $percentage = ($product->product_quantity / $totalQuantity) * 100;
+            $piedata[] = [$product->product_name, $percentage];
+        }
+
+        // Chuyển mảng dữ liệu sang JSON để sử dụng trong JavaScript
+        $piedataJson = json_encode($piedata);
+        $data['piedataJson'] = $piedataJson;
+        // dd($data['piedataJson']);
 
         return view('admin.index', $data);
     }
@@ -137,7 +201,9 @@ class HomeController extends Controller
         $filteredData = DB::table('lv_shipping')
             ->select(
                 DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(shipping_total) as total_sales')
+                DB::raw('SUM(shipping_total) as total_sales'),
+                // DB::raw('SUM(lv_shipping.shipping_profit) as profit_sales'),
+                // DB::raw('SUM(lv_shipping_details.quantity) as total_quantity')
             )
             ->where('shipping_states', 2)
             ->where('created_at', '>=', $fromDate)
@@ -150,12 +216,14 @@ class HomeController extends Controller
         // Duyệt qua dữ liệu đã lọc để tính lợi nhuận và tạo cấu trúc dữ liệu
         foreach ($filteredData as $shipping) {
             $totalSales = floatval($shipping->total_sales);
-            $profit = $totalSales * 0.6;
+            $profit = floatval($shipping->profit_sales);
+            $totalQuantity = intval($shipping->total_quantity);
 
             $filteredDoanhSoData[] = [
                 'created_at' => $shipping->date,
                 'doanh_so' => $totalSales,
                 'loi_nhuan' => $profit,
+                'tong_sanpham' => $totalQuantity,
             ];
         }
 
@@ -167,12 +235,66 @@ class HomeController extends Controller
     {
         Auth::logout();
         return redirect()->intended('login');
-
-        // session()->forget('user_role'); // Xóa vai trò người dùng khỏi session
-        // return redirect()->intended('login');
     }
 
-    public function getStatistic()
+    public function getChat()
     {
+        // $users = User::where('id', '!=', Auth::id())->get();
+
+        $users = DB::select(
+        "select lv_users.id, lv_users.name, lv_users.avatar, lv_users.email, count(is_read) as unread
+        from lv_users 
+        LEFT JOIN lv_messages ON lv_users.id = lv_messages.from and is_read = 0 and lv_messages.to = " . Auth::id() . "
+        where lv_users.id != " . Auth::id() . "
+        group by lv_users.id, lv_users.name, lv_users.avatar, lv_users.email");
+
+        return view('admin.chat', ['users' => $users]);
+    }
+
+    public function getMessage($user_id)
+    {
+        // return $user_id;
+        $my_id = Auth::id();
+
+        Message::where(['from' => $user_id, 'to' => $my_id])->update(['is_read' => 1]);
+
+        $messages = Message::where(function ($query) use ($user_id, $my_id) {
+            $query->where('from', $my_id)->where('to', $user_id);
+        })->orWhere(function ($query) use ($user_id, $my_id) {
+            $query->where('from', $user_id)->where('to', $my_id);
+        })->get();
+
+        return view('admin.message', ['messages' => $messages]);
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $from = Auth::id();
+        $to = $request->received_id;
+        $message = $request->message;
+
+        $data = new Message();
+        $data->from = $from;
+        $data->to = $to;
+        $data->message = $message;
+        $data->is_read = 0;
+        $data->save();
+        // dd($data);
+
+        $options = array(
+            'cluster' => 'ap2',
+            'useTLS' => true
+        );
+
+        $pusher = new Pusher(
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
+            $options
+        );
+
+        $data = ['from' => $from, 'to' => $to];
+        $pusher->trigger('my-channel', 'my-event', $data);
+
     }
 }

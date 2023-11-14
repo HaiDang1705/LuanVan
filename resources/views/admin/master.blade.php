@@ -110,6 +110,7 @@
                             <a href="{{asset('admin/nhap')}}" class="dropdown-item">Nhập kho</a>
                         </div>
                     </div>
+                    <a href="{{asset('admin/chat')}}" class="nav-item nav-link"><i class="fa fa-comments"></i>Tin nhắn</a>
                 </div>
             </nav>
         </div>
@@ -131,7 +132,7 @@
                     <input class="form-control bg-dark border-0" type="search" placeholder="Tìm kiếm">
                 </form>
                 <div class="navbar-nav align-items-center ms-auto">
-                    <div class="nav-item dropdown">
+                    <!-- <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <i class="fa fa-envelope me-lg-2"></i>
                             <span class="d-none d-lg-inline-flex">Tin nhắn</span>
@@ -169,8 +170,8 @@
                             <hr class="dropdown-divider">
                             <a href="#" class="dropdown-item text-center">See all message</a>
                         </div>
-                    </div>
-                    <div class="nav-item dropdown">
+                    </div> -->
+                    <!-- <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <i class="fa fa-bell me-lg-2"></i>
                             <span class="d-none d-lg-inline-flex">Thông báo</span>
@@ -193,7 +194,7 @@
                             <hr class="dropdown-divider">
                             <a href="#" class="dropdown-item text-center">See all notifications</a>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <img class="rounded-circle me-lg-2" src="img/me.jpg" alt="" style="width: 40px; height: 40px;">

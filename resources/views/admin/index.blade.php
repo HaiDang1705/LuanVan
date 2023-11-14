@@ -15,19 +15,19 @@
         </div>
         <div class="col-sm-6 col-xl-3">
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                <i class="fa fa-chart-area fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Số bài đăng</p>
-                    <h6 class="mb-0">{{ $totalPosts }}</h6>
+                    <p class="mb-2">Tổng doanh thu</p>
+                    <h6 class="mb-0">{{$totalDoanhThu}} VNĐ</h6>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-xl-3">
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
-                <i class="fa fa-chart-area fa-3x text-primary"></i>
+                <i class="fa fa-chart-bar fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng doanh thu</p>
-                    <h6 class="mb-0">{{$totalDoanhThu}} VNĐ</h6>
+                    <p class="mb-2">Tổng lợi nhuận</p>
+                    <h6 class="mb-0">{{$totalLoiNhuan}} VNĐ</h6>
                 </div>
             </div>
         </div>
@@ -55,8 +55,8 @@
             <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                 <i class="fa fa-chart-bar fa-3x text-primary"></i>
                 <div class="ms-3">
-                    <p class="mb-2">Tổng lợi nhuận</p>
-                    <h6 class="mb-0">{{$totalLoiNhuan}} VNĐ</h6>
+                    <p class="mb-2">Số bài đăng</p>
+                    <h6 class="mb-0">{{ $totalPosts }}</h6>
                 </div>
             </div>
         </div>
@@ -122,12 +122,12 @@
 
 <!-------------------------------------------- BẮT ĐẦU THAY ĐỔI NỘI DUNG ---------------------->
 <!-- Recent Sales Start -->
+<!-- Biểu đồ thống kê doanh số/lợi nhuận -->
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div class="align-items-center justify-content-between mb-4">
-            <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">THỐNG KÊ ĐƠN HÀNG DOANH SỐ</h6>
+            <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">THỐNG KÊ DOANH SỐ / LỢI NHUẬN BÁN HÀNG</h6>
         </div>
-        <!--  -->
         <div class="align-items-center justify-con  tent-between mb-4">
             <form autocomplete="off" action="">
                 <div class="row">
@@ -153,12 +153,47 @@
                 {{csrf_field()}}
             </form>
         </div>
-
         <!-- BIểu đồ -->
         <div class="col-md-12">
             <div id="myfirstchart"></div>
         </div>
-
+    </div>
+</div>
+<!-- Biểu đồ thống kê đơn nhập hàng -->
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="align-items-center justify-content-between mb-4">
+            <h6 class="mb-0" style="font-size: 24px;color: #EB1616;">THỐNG KÊ ĐƠN NHẬP HÀNG</h6>
+        </div>
+        <div class="align-items-center justify-con  tent-between mb-4">
+            <form autocomplete="off" action="">
+                <div class="row">
+                    <div class="col-2" style="text-align: left;">
+                        <p>Từ ngày: <input type="text" id="datepicker3" class="form-control"></p>
+                        <input type="button" name="submit" class="btn btn-primary btn-sm" id="btn-dashboard-filter" value="Lọc kết quả">
+                    </div>
+                    <div class="col-2" style="text-align: left;">
+                        <p>Đến ngày: <input type="text" id="datepicker4" class="form-control"></p>
+                    </div>
+                    <div class="col-2" style="text-align: left;">
+                        <p>
+                            Lọc theo:
+                            <select id="filter-select1" class="dashboard-filter form-control" style="text-align: center;">
+                                <option>--Chọn--</option>
+                                <option value="7ngay">7 ngày qua</option>
+                                <option value="thangtruoc">Tháng này</option>
+                                <option value="365ngayqua">365 ngày qua</option>
+                            </select>
+                        </p>
+                    </div>
+                </div>
+                {{csrf_field()}}
+            </form>
+        </div>
+        <!-- BIểu đồ -->
+        <div class="col-md-12">
+            <div id="mysecondchart"></div>
+        </div>
     </div>
 </div>
 <div class="container-fluid pt-4 px-4">
@@ -238,6 +273,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
 <!-- <script>
     // Dữ liệu mẫu cho biểu đồ
     var sampleData = [
@@ -249,7 +285,7 @@
 
     // Khởi tạo biểu đồ Morris
     var chart = Morris.Line({
-        element: 'myfirstchart', // ID của phần tử để vẽ biểu đồ
+        element: 'mysecondchart', // ID của phần tử để vẽ biểu đồ
         data: sampleData,
         xkey: 'y', // Trường chứa dữ liệu thời gian (ngày)
         ykeys: ['a'], // Trường chứa dữ liệu giá trị
@@ -276,19 +312,20 @@
         chart.setData(filteredData);
     });
 </script> -->
+
 <script>
     var doanhSoData = @json($doanhSoData);
     var chart = Morris.Bar({
         element: 'myfirstchart',
         data: doanhSoData, // Sử dụng biến JSON
         xkey: 'created_at',
-        ykeys: ['doanh_so', 'loi_nhuan'],
-        labels: ['Doanh số', 'Lợi nhuận'],
+        ykeys: ['doanh_so', 'loi_nhuan', 'tong_sanpham'],
+        labels: ['Doanh số', 'Lợi nhuận', 'Tổng sản phẩm'],
         parseTime: false,
         xLabels: "day",
         hideHover: 'auto',
         resize: true,
-        lineColors: ['#EB1616', '#34A853'],
+        lineColors: ['#EB1616', '#34A853', '#34A850'],
     });
 
     // Xử lý sự kiện khi người dùng click vào nút "Lọc kết quả"
@@ -334,6 +371,22 @@
                 chart.setData(data);
             }
         });
+    });
+</script>
+
+<script>
+    var nhapKhoData = @json($nhapKhoData);
+    var chart = Morris.Bar({
+        element: 'mysecondchart',
+        data: nhapKhoData, // Sử dụng biến JSON
+        xkey: 'created_at',
+        ykeys: ['tong_nhap', 'tong_sanphamnhap'],
+        labels: ['Tổng nhập kho', 'Tổng sản phẩm nhập'],
+        parseTime: false,
+        xLabels: "day",
+        hideHover: 'auto',
+        resize: true,
+        lineColors: ['#EB1616', '#34A853'],
     });
 </script>
 <!-- <script type="text/javascript">
@@ -406,6 +459,7 @@
 <!-- Biểu đồ hình tròn -->
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
+    var piedata = @json($piedataJson);
     google.charts.load('current', {
         'packages': ['corechart']
     });
@@ -414,14 +468,7 @@
     function drawChart() {
 
         // Set Data
-        const data = google.visualization.arrayToDataTable([
-            ['Contry', 'Mhl'],
-            ['Italy', 54.8],
-            ['France', 48.6],
-            ['Spain', 44.4],
-            ['USA', 23.9],
-            ['Argentina', 14.5]
-        ]);
+        const data = google.visualization.arrayToDataTable(<?php echo $piedataJson; ?>);
 
         // Set Options
         const options = {

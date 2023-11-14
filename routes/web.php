@@ -263,6 +263,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::get('delete/{id}', 'ImportController@getDeleteProduct');
             // Route::post('/', 'ImportController@postImport');
         });
+
+        Route::group(['prefix' => 'chat'], function () {
+            Route::get('/', 'HomeController@getChat');
+            Route::get('message/{id}', 'HomeController@getMessage')->name('message');
+            Route::post('message', 'HomeController@sendMessage');
+        });
     });
 });
 
