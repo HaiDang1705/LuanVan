@@ -170,7 +170,7 @@
                 <div class="row">
                     <div class="col-2" style="text-align: left;">
                         <p>Từ ngày: <input type="text" id="datepicker3" class="form-control"></p>
-                        <input type="button" name="submit" class="btn btn-primary btn-sm" id="btn-dashboard-filter" value="Lọc kết quả">
+                        <input type="button" name="submit" class="btn btn-primary btn-sm" id="btn-dashboard-filter2" value="Lọc kết quả">
                     </div>
                     <div class="col-2" style="text-align: left;">
                         <p>Đến ngày: <input type="text" id="datepicker4" class="form-control"></p>
@@ -271,49 +271,44 @@
 @section('script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-<!-- <script>
-    // Dữ liệu mẫu cho biểu đồ
-    var sampleData = [
-        { y: '2023-01-01', a: 50 },
-        { y: '2023-01-02', a: 75 },
-        { y: '2023-01-03', a: 30 },
-        // Thêm dữ liệu cho các ngày khác ở đây
-    ];
-
-    // Khởi tạo biểu đồ Morris
-    var chart = Morris.Line({
-        element: 'mysecondchart', // ID của phần tử để vẽ biểu đồ
-        data: sampleData,
-        xkey: 'y', // Trường chứa dữ liệu thời gian (ngày)
-        ykeys: ['a'], // Trường chứa dữ liệu giá trị
-        labels: ['Giá trị'], // Nhãn cho dữ liệu
-        xLabels: "day",
-        parseTime: false,
-        hideHover: 'auto',
-        resize: true,
-        lineColors: ['#EB1616']
-    });
-
-    // Xử lý sự kiện khi người dùng click vào nút "Lọc kết quả"
-    document.getElementById('btn-dashboard-filter').addEventListener('click', function () {
-        // Lấy ngày bắt đầu và kết thúc từ input
-        var fromDate = document.getElementById('datepicker').value;
-        var toDate = document.getElementById('datepicker2').value;
-
-        // Thực hiện lọc dữ liệu theo khoảng thời gian được chọn
-        var filteredData = sampleData.filter(function (item) {
-            return item.y >= fromDate && item.y <= toDate;
+<script>
+    $(document).ready(function() {
+        $("#datepicker").datepicker({
+            prevText: "Tháng trước",
+            nextText: "Tháng sau",
+            dateFormat: "yy-mm-dd",
+            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
+            duration: "slow"
+        });
+        $("#datepicker2").datepicker({
+            prevText: "Tháng trước",
+            nextText: "Tháng sau",
+            dateFormat: "yy-mm-dd",
+            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
+            duration: "slow"
         });
 
-        // Cập nhật dữ liệu cho biểu đồ
-        chart.setData(filteredData);
+        $("#datepicker3").datepicker({
+            prevText: "Tháng trước",
+            nextText: "Tháng sau",
+            dateFormat: "yy-mm-dd",
+            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
+            duration: "slow"
+        });
+        $("#datepicker4").datepicker({
+            prevText: "Tháng trước",
+            nextText: "Tháng sau",
+            dateFormat: "yy-mm-dd",
+            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
+            duration: "slow"
+        });
     });
-</script> -->
+</script>
 
 <script>
+    // Biểu đồ đầu tiên
     var doanhSoData = @json($doanhSoData);
     var chart = Morris.Bar({
         element: 'myfirstchart',
@@ -337,11 +332,14 @@
 
         // Tính toán ngày bắt đầu và ngày kết thúc dựa vào lựa chọn
         if (filterSelect === '7ngay') {
-            // Tính ngày 7 ngày trước
-            var sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            fromDate = sevenDaysAgo.toISOString().split('T')[0];
-            toDate = new Date().toISOString().split('T')[0]; // Cập nhật toDate thành ngày hiện tại
+            // Tính ngày bắt đầu 7 ngày trước
+            var sevenDaysAgoStart = new Date();
+            sevenDaysAgoStart.setDate(sevenDaysAgoStart.getDate() - 7);
+            fromDate = sevenDaysAgoStart.toISOString().split('T')[0];
+
+            // Ngày kết thúc là ngày hiện tại
+            toDate = new Date().toISOString().split('T')[0];
+
             // Loại bỏ thời gian khỏi fromDate
             fromDate = fromDate.split('T')[0];
         } else if (filterSelect === 'thangtruoc') {
@@ -375,8 +373,9 @@
 </script>
 
 <script>
+    // Biểu đồ thứ hai
     var nhapKhoData = @json($nhapKhoData);
-    var chart = Morris.Bar({
+    var chart2 = Morris.Bar({
         element: 'mysecondchart',
         data: nhapKhoData, // Sử dụng biến JSON
         xkey: 'created_at',
@@ -388,72 +387,53 @@
         resize: true,
         lineColors: ['#EB1616', '#34A853'],
     });
-</script>
-<!-- <script type="text/javascript">
-    $(function() {
-        $("#datepicker").datepicker({
-            prevText: "Tháng trước",
-            nextText: "Tháng sau",
-            dateFormat: "yy-mm-dd",
-            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
-            duration: "slow"
-        });
-        $("#datepicker2").datepicker({
-            prevText: "Tháng trước",
-            nextText: "Tháng sau",
-            dateFormat: "yy-mm-dd",
-            dayNamesMin: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"],
-            duration: "slow"
+    // Xử lý sự kiện khi người dùng click vào nút "Lọc kết quả"
+    document.getElementById('btn-dashboard-filter2').addEventListener('click', function() {
+        var fromDate1 = document.getElementById('datepicker3').value;
+        var toDate1 = document.getElementById('datepicker4').value;
+
+        var filterSelect1 = document.getElementById('filter-select1').value;
+
+        // Tính toán ngày bắt đầu và ngày kết thúc dựa vào lựa chọn
+        if (filterSelect1 === '7ngay') {
+            // Tính ngày bắt đầu 7 ngày trước
+            var sevenDaysAgoStart = new Date();
+            sevenDaysAgoStart.setDate(sevenDaysAgoStart.getDate() - 7);
+            fromDate1 = sevenDaysAgoStart.toISOString().split('T')[0];
+
+            // Ngày kết thúc là ngày hiện tại
+            toDate1 = new Date().toISOString().split('T')[0];
+
+            // Loại bỏ thời gian khỏi fromDate
+            fromDate1 = fromDate1.split('T')[0];
+        } else if (filterSelect1 === 'thangtruoc') {
+            // Tính ngày đầu của tháng hiện tại
+            var today = new Date();
+            fromDate1 = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+            toDate1 = new Date().toISOString().split('T')[0]; // Cập nhật toDate thành ngày hiện tại
+            fromDate1 = fromDate1.split('T')[0];
+        } else if (filterSelect1 === '365ngayqua') {
+            // Tính ngày 365 ngày trước
+            var threeSixtyFiveDaysAgo = new Date();
+            threeSixtyFiveDaysAgo.setDate(threeSixtyFiveDaysAgo.getDate() - 365);
+            fromDate1 = threeSixtyFiveDaysAgo.toISOString().split('T')[0];
+            toDate1 = new Date().toISOString().split('T')[0]; // Cập nhật toDate thành ngày hiện tại
+            fromDate1 = fromDate1.split('T')[0];
+        }
+
+        // Thực hiện truy vấn cơ sở dữ liệu và cập nhật biểu đồ
+        $.ajax({
+            url: '{{url("admin/index/filterNhapKho")}}', // Điều này cần được định nghĩa trong routes.php
+            data: {
+                from_date: fromDate1,
+                to_date: toDate1
+            },
+            type: 'GET',
+            success: function(data) {
+                chart2.setData(data);
+            }
         });
     });
-</script> -->
-
-<script type="text/javascript">
-    // $(document).ready(function(){
-
-    //     chart30daysorder();
-    //     var chart = new Morris.Bar({
-    //         element: 'myfirstchart',
-
-    //         lineColors: ['#819C79', "#fc8710", "#FF6541", "#A4ADD3", "#766B56"],
-
-    //         pointFillColors: ['#ffffff'],
-    //         pointStrokeColor: ['black'],
-    //         fillOpacity: 0.6,
-    //         hideHover: 'auto',
-    //         parseTime: false,
-    //         xkey: 'perior',
-    //         ykeys: ['order', 'sales', 'profit', 'quantity'],
-    //         behaveLikeline: true,
-    //         labels: ['đơn hàng', 'doanh số', 'lợi nhuận', 'số lượng']
-    //     });
-
-    //     function chart30daysorder(){
-
-    //     }
-
-    //     $('#btn-dashboard-filter').click(function() {
-    //         alert('Da nhan');
-    //         var _token = $('input[name="_token').val();
-
-    //         var from_date = $('#datepicker').val();
-    //         var to_date = $('#datepicker2').val();
-
-    //         // alert(from_date);
-    //         // alert(to_date);
-    //         $.ajax({
-    //             url:"{{url('admin/index')}}",
-    //             method:"POST",
-    //             dataType:"JSON",
-    //             data:{from_date: from_date, to_date: to_date, _token: _token},
-
-    //             success:function(data)
-    //             {
-    //                 chart.setData(data);
-    //             }
-    //         });
-    //     });
-    // });
 </script>
 
 <!-- Biểu đồ hình tròn -->

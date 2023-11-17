@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Pusher\Pusher;
 
 class HomeController extends Controller
@@ -197,29 +198,32 @@ class HomeController extends Controller
         $fromDate = date('Y-m-d', strtotime($request->input('from_date')));
         $toDate = date('Y-m-d', strtotime($request->input('to_date')));
 
+        // Thêm 1 ngày vào $toDate sử dụng lớp Carbon
+        $toDate = Carbon::parse($toDate)->addDays(1)->format('Y-m-d');
+
         // Truy vấn cơ sở dữ liệu của bạn để lấy dữ liệu đã lọc dựa trên $fromDate và $toDate
-        $filteredData = DB::table('lv_shipping')
+        $filteredDoanhSoData = DB::table('lv_shipping')
             ->select(
                 DB::raw('DATE(created_at) as date'),
                 DB::raw('SUM(shipping_total) as total_sales'),
-                // DB::raw('SUM(lv_shipping.shipping_profit) as profit_sales'),
-                // DB::raw('SUM(lv_shipping_details.quantity) as total_quantity')
+                DB::raw('SUM(shipping_profit) as profit_sales'),
+                DB::raw('SUM(shipping_slug) as total_quantity'),
             )
             ->where('shipping_states', 2)
             ->where('created_at', '>=', $fromDate)
-            ->where('created_at', '<', $toDate)
+            ->where('created_at', '<=', $toDate)
             ->groupBy('date')
             ->get();
 
-        $filteredDoanhSoData = [];
+        $filteredDoanhSoDataFormatted = [];
 
         // Duyệt qua dữ liệu đã lọc để tính lợi nhuận và tạo cấu trúc dữ liệu
-        foreach ($filteredData as $shipping) {
+        foreach ($filteredDoanhSoData as $shipping) {
             $totalSales = floatval($shipping->total_sales);
             $profit = floatval($shipping->profit_sales);
             $totalQuantity = intval($shipping->total_quantity);
 
-            $filteredDoanhSoData[] = [
+            $filteredDoanhSoDataFormatted[] = [
                 'created_at' => $shipping->date,
                 'doanh_so' => $totalSales,
                 'loi_nhuan' => $profit,
@@ -228,7 +232,46 @@ class HomeController extends Controller
         }
 
         // Trả về dữ liệu đã lọc dưới dạng phản hồi JSON
-        return response()->json($filteredDoanhSoData);
+        return response()->json($filteredDoanhSoDataFormatted);
+    }
+
+    public function filterDataNhapKho(Request $request)
+    {
+        $fromDate1 = date('Y-m-d', strtotime($request->input('from_date')));
+        $toDate1 = date('Y-m-d', strtotime($request->input('to_date')));
+
+        // Thêm 1 ngày vào $toDate sử dụng lớp Carbon
+        $toDate1 = Carbon::parse($toDate1)->addDays(1)->format('Y-m-d');
+
+        // Truy vấn cơ sở dữ liệu của bạn để lấy dữ liệu đã lọc dựa trên $fromDate và $toDate
+        $filteredNhapKhoData = DB::table('lv_nhapkho')
+            ->select(
+                DB::raw('DATE(lv_nhapkho.created_at) as date'),
+                DB::raw('SUM(lv_nhapkho.nhapkho_total) as nhapkho_total'),
+                DB::raw('SUM(lv_nhapkho_details.quantity) as total_quantity')
+            )
+            ->join('lv_nhapkho_details', 'lv_nhapkho.nhapkho_id', '=', 'lv_nhapkho_details.nhapkho_id')
+            ->where('lv_nhapkho.created_at', '>=', $fromDate1) // Chỉ định rõ trường 'created_at' đến từ bảng lv_nhapkho
+            ->where('lv_nhapkho.created_at', '<=', $toDate1)  // Chỉ định rõ trường 'created_at' đến từ bảng lv_nhapkho
+            ->groupBy('date')
+            ->get();
+
+        $filteredNhapKhoDataFormatted = [];
+
+        // Duyệt qua dữ liệu đã lọc để tạo cấu trúc dữ liệu
+        foreach ($filteredNhapKhoData as $nhapKho) {
+            $totalNhapKho = floatval($nhapKho->nhapkho_total);
+            $totalQuantityNhapKho = intval($nhapKho->total_quantity);
+
+            $filteredNhapKhoDataFormatted[] = [
+                'created_at' => $nhapKho->date,
+                'tong_nhap' => $totalNhapKho,
+                'tong_sanphamnhap' => $totalQuantityNhapKho,
+            ];
+        }
+
+        // Trả về dữ liệu đã lọc dưới dạng phản hồi JSON
+        return response()->json($filteredNhapKhoDataFormatted);
     }
 
     public function getLogout()
@@ -242,11 +285,12 @@ class HomeController extends Controller
         // $users = User::where('id', '!=', Auth::id())->get();
 
         $users = DB::select(
-        "select lv_users.id, lv_users.name, lv_users.avatar, lv_users.email, count(is_read) as unread
+            "select lv_users.id, lv_users.name, lv_users.avatar, lv_users.email, count(is_read) as unread
         from lv_users 
         LEFT JOIN lv_messages ON lv_users.id = lv_messages.from and is_read = 0 and lv_messages.to = " . Auth::id() . "
         where lv_users.id != " . Auth::id() . "
-        group by lv_users.id, lv_users.name, lv_users.avatar, lv_users.email");
+        group by lv_users.id, lv_users.name, lv_users.avatar, lv_users.email"
+        );
 
         return view('admin.chat', ['users' => $users]);
     }
@@ -295,6 +339,5 @@ class HomeController extends Controller
 
         $data = ['from' => $from, 'to' => $to];
         $pusher->trigger('my-channel', 'my-event', $data);
-
     }
 }
