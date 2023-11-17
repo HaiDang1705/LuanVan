@@ -20,4 +20,8 @@ class Order extends Model
     {
         return $this->belongsTo(Payment::class, 'id', 'p_transaction_id');
     }
+    public function orderDetail()
+    {
+        return $this->hasMany(OrderDetail::class, 'shipping_id');
+    }
 }

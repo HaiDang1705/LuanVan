@@ -240,6 +240,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
             Route::get('delete/{id}', 'OrderController@getDeleteOrder');
             // In don hang
             Route::get('printorder/{checkout_code}', 'OrderController@printOrder');
+            // Gửi mail
+            Route::get('sendmail/{id}', 'OrderController@sendMail')->name('sendMail');
         });
 
         Route::group(['prefix' => 'nhap-xuat'], function () {

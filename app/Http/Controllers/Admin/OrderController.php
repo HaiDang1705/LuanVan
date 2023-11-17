@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use PDF;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderShipped;
 
 use function Symfony\Component\String\b;
 
@@ -163,24 +165,67 @@ class OrderController extends Controller
         $output = '';
         $output .= '
         <style>
-            body{
+            body {
                 font-family: DejaVu Sans;
             }
-            .table-styling{
+
+            .table-styling {
                 border: 1px solid #000;
             }
-            .table-styling thead tr th{
+
+            .table-styling thead tr th,
+            .table-styling tbody tr td {
                 border: 1px solid #000;
             }
-            .table-styling tbody tr td{
+
+            .row::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+
+            .col-6 {
+                width: 50%;
+                float: left;
+            }
+
+            .container {
+                width: 100%;
+                padding-right: 15px;
+                padding-left: 15px;
+                margin-right: auto;
+                margin-left: auto;
+            }
+            .table-styling {
+                border-collapse: collapse;
+            }
+        
+            .table-styling thead tr th {
                 border: 1px solid #000;
+            }
+        
+            .table-styling tbody tr td {
+                border: 1px solid #000;
+            }
+        
+            .table-styling td[colspan="5"] {
+                border: none; /* Loại bỏ đường viền của ô mở rộng */
             }
         </style>
-        <h2 style="text-align: center;">Công Ty TNHH MTV Sơn Kim Cương Trúc Tiên</h2>
-        <h5>Địa chỉ: 310 Lý Thường Kiệt, Khóm 2, Phường 6, TP Cà Mau</h5>
-        <h5>Tổng đài hỗ trợ: 0913625637</h5>
-        <h5>' . $formattedDate . '</h5>
-        ------------------------------------------------------------------------------------------------------------------------------------
+        <h2 style="text-align: center;">CÔNG TY TNHH MTV Sơn Kim Cương Trúc Tiên</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <h5>Địa chỉ: 310 Lý Thường Kiệt, Khóm 2, Phường 6, TP Cà Mau</h5>
+                    <h5 style="margin-top:-20px; margin-bottom:-5px">Tổng đài hỗ trợ: 0913625637</h5>
+                </div>
+                <div class="col-6" style="text-align:right">
+                        <h5>' . $formattedDate . '</h5>
+                </div>
+            </div>
+        </div>
+        
+        - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         <div class="container-fluid pt-4 px-4">
             <div class="bg-secondary text-center rounded p-4">
             <div class="d-flex align-items-center justify-content-between mb-4">
@@ -206,43 +251,14 @@ class OrderController extends Controller
                             <td>' . $order->shipping_phone . '</td>
                             <td>' . $order->shipping_name . '</td>
                             <td>' . $order->shipping_address . '</td>
-                        </tr>';
-
-        $output .= '                            
-                    </tbody>
-                </table>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="mb-0" style="font-size: 24px;margin: auto; text-align:center;">THÔNG TIN NGƯỜI VẬN CHUYỂN</h6>
-            </div>
-            <div class="table-responsive" style="margin: 20px 0px;">
-                <table class="table text-start align-middle table-bordered table-hover mb-0 table-styling">
-                    <thead>
-                        <tr class="text-white">
-                            <th scope="col">Tên người vận chuyển</th>
-                            <th scope="col">Địa chỉ</th>
-                            <th scope="col">Số điện thoại</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Ghi chú</th>
-                            <th scope="col">Hình thức thanh toán</th>
                         </tr>
-                    </thead>
-                    <tbody>';
-
-        $output .= '    
-                    <tr style="text-align: center;">
-                            <td>Nguyễn Hải Đăng - chưa</td>
-                            <td>Cà Mau - chưa</td>
-                            <td>0123456789 - chưa</td>
-                            <td>dang@gmail.com - chưa</td>
-                            <td>aaaaaaaa - chưa</td>
-                            <td>Thanh toán khi nhận hàng - chưa</td>
-                        </tr>';
-
-        $output .= '                            
-                    </tbody>
+                        </tbody>
                 </table>
-            </div>
+            </div>';
+
+
+
+        $output .= '
         
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h6 class="mb-0" style="font-size: 24px;margin: auto; text-align:center;">CHI TIẾT ĐƠN HÀNG</h6>
@@ -273,12 +289,21 @@ class OrderController extends Controller
                         </tr>';
             $counter++;
         }
-        $output .= '                            
+        $output .= '
+                        <tr>
+                            <td colspan="3">
+                                <h6 class="mb-0" style="font-size: 16px;margin: auto; text-align:center;margin: 10px 0px;">
+                                    Tổng cộng
+                                </h6>
+                            </td>
+                            <td colspan="2">
+                                <h6 class="mb-0" style="font-size: 16px;margin: auto; text-align:center;margin: 10px 0px;">
+                                    ' . number_format(floatval(str_replace(',', '', $order->shipping_total)), 0, ',', '.') . ' VNĐ
+                                </h6>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
-                </div>
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h6 class="mb-0" style="font-size: 16px;margin: auto; text-align:left;margin: 20px 0px;">Tổng cộng: ' . number_format(floatval(str_replace(',', '', $order->shipping_total)), 0, ',', '.') . ' VNĐ</h6>
                 </div>';
         $output .= '
                 <div class="table-responsive" style="margin: 20px 0px;">
@@ -291,7 +316,7 @@ class OrderController extends Controller
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="text-align:center">Đăng</td>
+                                <td style="text-align:center"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -306,5 +331,14 @@ class OrderController extends Controller
     {
         $totalSoldProducts = DB::table('lv_shipping_details')->sum('quantity');
         return $totalSoldProducts;
+    }
+
+    public function sendMail($id)
+    {
+        $order = Order::with('orderDetail')->find($id);
+        // Gửi email
+        // dd($order->orderDetail);
+        Mail::to($order->shipping_email)->send(new OrderShipped($order));
+        return redirect()->back()->with('success', 'Email đã được gửi thành công.');
     }
 }

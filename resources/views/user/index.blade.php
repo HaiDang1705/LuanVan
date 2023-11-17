@@ -72,29 +72,31 @@
 <!-- Dòng 4 -->
 <div class="row slider-margin">
     <!-- Dòng 4 cột 1 -->
-    @foreach($listproducts as $product)
-    @if($product->product_status == 1 && $product->product_quantity > 0)
-    <div class="col-md-3 product-bottom">
-        <div class="card">
-            <img style="height: 150px;" src="{{asset('storage/storage/avatar/'.$product->product_image)}}" class="card-img-top image" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">{{$product->product_name}}</h5>
-                <p class="card-text">
-                    {{$product->product_mota}}
-                </p>
-                <div class="row">
-                    <div class="col-md-9">
-                        <h4 class="card-price">{{number_format($product->product_price,0,',','.')}}đ</h4>
-                    </div>
-                    <div class="col-md-3">
-                        <h5 class="card-quantity">SL: {{ $product->product_quantity }}</h5>
+    @foreach($listproducts as $categorySlug => $categoryProducts)
+        @foreach($categoryProducts as $product)
+            @if($product->product_status == 1 && $product->product_quantity > 0)
+                <div class="col-md-3 product-bottom">
+                    <div class="card">
+                        <img style="height: 150px;" src="{{asset('storage/storage/avatar/'.$product->product_image)}}" class="card-img-top image" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{$product->product_name}}</h5>
+                            <p class="card-text">
+                                {{$product->product_mota}}
+                            </p>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <h4 class="card-price">{{number_format($product->product_price,0,',','.')}}đ</h4>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="card-quantity">SL: {{ $product->product_quantity }}</h5>
+                                </div>
+                            </div>
+                            <a href="{{asset('user/detail/'.$product->product_id.'/'.$product->product_slug)}}" class="btn btn-danger w-100">THÊM VÀO GIỎ HÀNG</a>
+                        </div>
                     </div>
                 </div>
-                <a href="{{asset('user/detail/'.$product->product_id.'/'.$product->product_slug)}}" class="btn btn-danger w-100">THÊM VÀO GIỎ HÀNG</a>
-            </div>
-        </div>
-    </div>
-    @endif
+            @endif
+        @endforeach
     @endforeach
 </div>
 </div>

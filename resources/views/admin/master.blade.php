@@ -65,7 +65,6 @@
                             <a href="{{asset('admin/quantrivien')}}" class="dropdown-item">Danh sách nhà quản trị</a>
                             <!-- <a href="categorylist.php" class="dropdown-item">Sản Phẩm</a> -->
                             <a href="{{asset('admin/account_khachhang')}}" class="dropdown-item">Tài khoản khách hàng</a>
-                            <a href="quanly_taikhoan_nhaphanphoi.html" class="dropdown-item">Tài khoản nhà phân phối</a>
                         </div>
                     </div>
                     <div class="nav-item dropdown">
@@ -73,7 +72,6 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <!-- <a href="categorylist.php" class="dropdown-item">Sản Phẩm</a> -->
                             <a href="{{asset('admin/khachhang')}}" class="dropdown-item">Thông tin khách hàng</a>
-                            <a href="thongtin_nhaphanphoi.html" class="dropdown-item">Thông tin nhà phân phối</a>
                         </div>
                     </div>
                     <div class="nav-item dropdown">

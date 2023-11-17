@@ -143,11 +143,11 @@ class HomeController extends Controller
         $nhapKho = DB::table('lv_nhapkho')
             ->select(
                 DB::raw('DATE(lv_nhapkho.created_at) as date'),
-                DB::raw('SUM(lv_nhapkho.nhapkho_total) as total_nhap'),
+                DB::raw('lv_nhapkho.nhapkho_total as total_nhap'),
                 DB::raw('SUM(lv_nhapkho_details.quantity) as total_quantity')
             )
             ->leftJoin('lv_nhapkho_details', 'lv_nhapkho.nhapkho_id', '=', 'lv_nhapkho_details.nhapkho_id')
-            ->groupBy('date')
+            ->groupBy('date', 'lv_nhapkho.nhapkho_total')
             ->get();
         // dd($nhapKho);
 

@@ -22,17 +22,15 @@
                 </thead>
                 <tbody>
                     @foreach($userlist as $user)
-                    
                     <tr class="text-white">
                         <td>{{$user->id}}</td>
                         <td>{{$user->name}}</td>
                         <td>{{$user->email}}</td>
-                        <td></td>
-                        <td></td>
-                        <!-- <td>
-                            <a class="btn btn-sm btn-primary" href="">Xóa</a>
+                        <td>Admin</td>
+                        <td>
                             <a class="btn btn-sm btn-primary" href="{{asset('admin/listadmin/edit')}}">Edit</a>
-                        </td> -->
+                            <a class="btn btn-sm btn-primary" href="">Xóa</a>
+                        </td>
                     </tr>
                     
                     @endforeach

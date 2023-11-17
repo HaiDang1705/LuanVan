@@ -27,12 +27,34 @@ class HomeController extends Controller
 {
     public function getHome()
     {
-        $data['listproducts'] = Product::orderBy('product_id', 'desc')
-        ->take(8)
-        ->leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
-        ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
-        ->where('lv_product.product_status', 1)
-        ->get();
+        // Lấy ra tất cả các sản phẩm và số lượng + hiển thị
+        // $data['listproducts'] = Product::orderBy('product_id', 'desc')
+        //     ->leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
+        //     ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
+        //     ->where('lv_product.product_status', 1)
+        //     ->get();
+
+        // -----------------------------LẤY RA 4 SẢN PHẨM THUỘC 4 DANH MỤC--------------------------------------
+        // Tạo một mảng để lưu trữ sản phẩm từ mỗi danh mục
+        $data['listproducts'] = [];
+        // Lấy danh sách tất cả danh mục
+        $categories = Category::all();
+
+        foreach ($categories as $category) {
+            // Lấy 4 sản phẩm ngẫu nhiên từ mỗi danh mục
+            $categoryProducts = Product::leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
+                ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
+                ->where('lv_product.product_status', 1)
+                ->where('lv_product.product_cate', $category->cate_id)
+                ->inRandomOrder() // Sắp xếp ngẫu nhiên
+                ->take(4) // Giới hạn số lượng sản phẩm
+                ->get();
+
+            // Gán vào mảng listproducts
+            $data['listproducts'][$category->cate_slug] = $categoryProducts;
+        }
+        // ------------------------------LẤY RA 4 SẢN PHẨM THUỘC 4 DANH MỤC-------------------------------------
+
         $customer = Auth::guard('customer')->user();
         $data['customer'] = $customer;
         if ($customer) {
@@ -72,7 +94,15 @@ class HomeController extends Controller
     public function getCategory($id)
     {
         $data['cateName'] = Category::find($id);
-        $data['items'] = Product::where('product_cate', $id)->orderBy('product_id', 'desc')->paginate(8);
+        // $data['items'] = Product::where('product_cate', $id)->orderBy('product_id', 'desc')->paginate(8);
+
+        $data['items'] = Product::leftJoin('lv_product_quantities', 'lv_product.product_id', '=', 'lv_product_quantities.product_id')
+            ->select('lv_product.*', 'lv_product_quantities.product_quantity as product_quantity')
+            ->where('lv_product.product_cate', $id)
+            ->where('lv_product.product_status', 1)
+            ->orderBy('lv_product.product_id', 'desc')
+            ->paginate(8);
+
         $customer = Auth::guard('customer')->user();
         $data['customer'] = $customer;
         if ($customer) {

@@ -44,6 +44,9 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
+        # -------------------THAY ĐỔI----------------------------
+        
+        # --------------------KẾT THÚC---------------------------
 
         'ses' => [
             'transport' => 'ses',

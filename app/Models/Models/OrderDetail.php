@@ -16,4 +16,8 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Shipping_States::class, 'shipping_id');
     }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'shipping_details_product_id', 'product_id');
+    }
 }
