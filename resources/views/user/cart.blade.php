@@ -163,7 +163,7 @@
                                         <input name="product_total" style="font-weight: bold;" value="{{$total}}"></input>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" style="display: none;">
                                     <div class="col-6">
                                         <h5 style="text-align: left;">Lợi nhuận:</h5>
                                     </div>
@@ -183,7 +183,7 @@
                                             <label style="font-weight: 700;" for="name">Họ và tên:</label>
                                             <input required type="text" class="form-control" id="name" name="name" value="{{$customer->name}}">
                                         </div>
-                                        @if($customerinfo)
+                                        @if(isset($customerinfo))
                                         <div class="form-group" style="text-align: left;">
                                             <label style="font-weight: 700;" for="phone">Số điện thoại:</label>
                                             <input required type="number" class="form-control" id="phone" name="phone" value="{{ $customerinfo->phone }}">
@@ -404,7 +404,7 @@
                                         <input name="product_total" style="font-weight: bold;" value="{{$total}}"></input>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" style="display: none;">
                                     <div class="col-6">
                                         <h5 style="text-align: left;">Lợi nhuận:</h5>
                                     </div>

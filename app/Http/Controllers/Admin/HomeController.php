@@ -56,9 +56,9 @@ class HomeController extends Controller
         $data['totalProducts'] = $totalProducts;
 
         // Lấy tổng số lượng bài đăng
-        $post = app(BaiDangController::class);
-        $totalPosts = $post->countPost();
-        $data['totalPosts'] = $totalPosts;
+        // $post = app(BaiDangController::class);
+        // $totalPosts = $post->countPost();
+        // $data['totalPosts'] = $totalPosts;
 
         // Lấy tổng số lượng đơn hàng
         $order = app(OrderController::class);
@@ -81,29 +81,29 @@ class HomeController extends Controller
         // --------------------------------------------------------------------------
 
         // Tính tổng số lượng sản phẩm đã bán
-        $totalSoldProducts = (new OrderController)->countSoldProducts();
-        $data['totalSoldProducts'] = $totalSoldProducts;
+        // $totalSoldProducts = (new OrderController)->countSoldProducts();
+        // $data['totalSoldProducts'] = $totalSoldProducts;
 
         // Tính tổng số lượng lượt xem của sản phẩm và bài đăng
-        $totalView = (new ProductController)->countViewProductsAndPosts();
-        $data['totalView'] = $totalView;
+        // $totalView = (new ProductController)->countViewProductsAndPosts();
+        // $data['totalView'] = $totalView;
 
         // Tính tổng khách hàng
-        $post = app(UserController::class);
-        $totalCustomers = $post->countCustomer();
-        $data['totalCustomers'] = $totalCustomers;
+        // $post = app(UserController::class);
+        // $totalCustomers = $post->countCustomer();
+        // $data['totalCustomers'] = $totalCustomers;
 
         // Tính tổng sản phẩm trong tồn trong kho
-        $totalProductsKho = (new ProductController)->countProductKho();
-        $data['totalProductsKho'] = $totalProductsKho;
+        // $totalProductsKho = (new ProductController)->countProductKho();
+        // $data['totalProductsKho'] = $totalProductsKho;
 
         // Tính tổng sản phẩm trong tồn trong kho
-        $totalMinusProductsKho = (new ProductController)->minusProductKho();
-        $data['totalMinusProductsKho'] = $totalMinusProductsKho;
+        // $totalMinusProductsKho = (new ProductController)->minusProductKho();
+        // $data['totalMinusProductsKho'] = $totalMinusProductsKho;
 
         // Tính tổng số bình luận
-        $totalComments = (new CommentController)->countComment();
-        $data['totalComments'] = $totalComments;
+        // $totalComments = (new CommentController)->countComment();
+        // $data['totalComments'] = $totalComments;
 
         // Doanh số
 
